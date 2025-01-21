@@ -54,8 +54,10 @@ public class VoiceVAContentObserver implements StreamObserver<Voicevirtualagent.
             log.info("writing response from onCompleted to client for SESSION_START event, conversationId : {}", conversationId);
             responseObserver.onNext(getCallStartResponse());
         } else if (voiceVirtualAgentService.isDtmfReceived()) {
-            log.info("writing response from onCompleted to client, conversationId : {}", conversationId);
-            responseObserver.onNext(getFinalVAResponse(true));
+        log.info("onCompleted at end of DTMF input, conversationId : {}", conversationId);
+        voiceVirtualAgentService.getFinalDTMF(conversationId, responseObserver);
+        } else {
+        log.info("Received oncomplete, But there is no defined state");
         }
 
         responseObserver.onCompleted();

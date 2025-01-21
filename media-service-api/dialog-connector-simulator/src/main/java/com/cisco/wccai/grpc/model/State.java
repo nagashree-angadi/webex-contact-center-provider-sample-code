@@ -9,5 +9,7 @@ public enum State {
     END_OF_INPUT,
     VA,
     CALL_END,
+    AGENT_TRANSFER,
+    NO_INPUT,
     AA
 }

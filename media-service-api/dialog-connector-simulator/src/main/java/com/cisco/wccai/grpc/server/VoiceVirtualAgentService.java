@@ -6,6 +6,9 @@ import io.grpc.stub.StreamObserver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVARequest;
 import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVAResponse;
 import static com.cisco.wccai.grpc.server.VirtualAgentUtils.*;
@@ -27,6 +30,7 @@ public class VoiceVirtualAgentService {
     private int totalSizeGateway = 0;
     @Getter
     private boolean isEndOfInput = false;
+    private HashMap<String, StringBuilder> dtmfInputBuffer = new LinkedHashMap<>();
 
     public void processVoiceVirtualAgentRequest(VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> voiceVAResponse) {
         String conversationId = voiceVARequest.getConversationId();
@@ -68,6 +72,23 @@ public class VoiceVirtualAgentService {
             resultState = State.END_OF_INPUT;
         }
         return resultState;
+    }
+
+    public void getFinalDTMF(String conversationId, StreamObserver<VoiceVAResponse> voiceVAResponse) {
+        log.info("Processing DTMF final response onComplete");
+
+        State finalState = null;
+        String dtmfInput = dtmfInputBuffer.get(conversationId).toString();
+        if (ByovaCommon.DTMFDigits.DTMF_DIGIT_FIVE.name().equals(dtmfInput)) {
+            finalState = State.AGENT_TRANSFER;
+        } else if (ByovaCommon.DTMFDigits.DTMF_DIGIT_SIX.name().equals(dtmfInput)) {
+            finalState = State.CALL_END;
+        }
+
+        if (null != finalState) {
+            getFinalDTMFResponse(finalState).ifPresent(voiceVAResponse::onNext);
+        }
+        dtmfInputBuffer.remove(conversationId);
     }
 
     private void processAudioInput(VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> voiceVAResponse) {
