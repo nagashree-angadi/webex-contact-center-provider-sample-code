@@ -1,5 +1,5 @@
 # Webex Contact Center AI
-Webex Contact Center AI APIs enables the AI Capabilities in Contact Center. Media Service APIs are offered for Bring your own Virtual agent use case.
+Webex Contact Center AI APIs enables the AI Capabilities in Contact Center. Media Service APIs are offered for Bring your own Virtual agent use case. Where a provider can on-board themselves and then using gRPC can communicate with Webex contact center platform.
 ## Virtual Agent
 Media service APIs can be leveraged for Self Service to offer Conversational IVR experience to end customer and offering them life like conversational experience by utilising conversational Text to Speech, Speech to Text and NLU enabled BOTs. 
 
@@ -7,5 +7,3 @@ Media service APIs can be leveraged for Self Service to offer Conversational IVR
 ## Media Service APIs
 To be used by Providers integrating with CCAI Platform to offer below services-
 1. BYoVA (Bring your own Virtual Agent)
-2. Real time audio Forking
-3. Real time transcripts
