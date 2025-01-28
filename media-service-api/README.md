@@ -17,10 +17,18 @@
 ![VA](https://user-images.githubusercontent.com/5176062/116988874-a37cef80-acee-11eb-9123-bd7fa37373f0.jpg)
 
 # Onboarding
-Webex Contact Center Control Hub to be used by the customer to create a configuration. 
+Webex Contact Center Control Hub to be used by the customer to create a configuration.
+For CASPRx providers-
 1.	A Connector will need to be created for each provider which includes the Provider endpoint, its services and Auth token.
 2.	A configuration will need to be created which is represented by a configId and will define the Services / Features to be used. 
 3.	Orchestrator will orchestrate the call to a specific provider and add the necessary feature flags based on the config details.
+
+For Non-CASPR providers-
+1.	A service app needs to be created(for Voice /Digital virtual agent schema) and should be authorized by customer admin for the usage.
+2.	A configuration will need to be created which is represented by a configId(which will be associated with service app) and will define the Services / Features to be used. 
+3.	Orchestrator will orchestrate the call to a specific provider and add the necessary feature flags based on the config details.
+
+Note: Detailed documentation for on-boarding can be found on webex developer portal
 API
 For detailed description of the API, please refer the protobuf files.
 •	VoiceVirtualAgent: API to be called for Virtual Agent request/Response.
@@ -29,7 +37,7 @@ Response: The response will need to populate the generic params defined in the p
 Features: The request will also carry the desired features needed on the incoming request. The response object should return the responses accordingly.
 # Authentication
 Provider to provide a mechanism to create a tenant specific auth key / token. Which will be onboarded during Onboarding. This key/token will be offered by Orchestrator to External Connector for Authentication, it will also be used by External Connector to identify the tenant and billing.
-TBD: Design for the Auth Server in Provider.
+For Non-CASPRx provider jws token will be used.
 # Serviceability
 Each Provider endpoint to expose certain APIs to monitor the health of endpoint.
 https://<Service endpoint>/<service Name>/v1/ping
