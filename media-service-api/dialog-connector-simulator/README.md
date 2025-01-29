@@ -20,7 +20,7 @@ To summarize, the voice virtual agent connects to a caller on a voice call and p
 The Dialog Connector Simulator is a sample code that demonstrates how to integrate an external conversational interface with Webex Contact Center IVR.
 
 Refer to the [Dialog Connector Simulator Sample Code](https://github.com/CiscoDevNet/webex-contact-center-ai-sample-code/tree/main/provider-api/dialog-connector-simulator).
-For the interface definition see `src/main/proto/com/cisco/wcc/ccai/v1/ccai-api.proto`.
+For the interface definition see `src/main/proto/com/cisco/wcc/ccai/media/v1/VoiceVirtualAgent.proto`.
 
 
 ### Onboarding Steps for Using the Dialog Connector Simulator
@@ -109,7 +109,7 @@ This sample code offers an overview of the various methods and messages used whe
 the Webex CC VA Client Application.
 
 Here,the Dialog Connector represents a **gRPC Server Application**(see `src/main/java/com/cisco/wccai/grpc/server/GrpcServer.java`) that listens for incoming requests from the
-Webex CC VA Client Application which is a **gRPC Client Application**(see `src/main/java/com/cisco/wccai/grpc/client/ConnectorClientVA.java`).
+Webex CC VA Client Application which is a **gRPC Client Application**(see `src/main/java/com/cisco/wccai/grpc/client/VoiceVAClient.java`).
 
 
 
@@ -131,8 +131,8 @@ Verify the Installation by opening a new terminal and run:
 #### Step 1. Start of Conversation
 1. The Dialog Connector will start up as a **gRPC Server Application** (`run GrpcServer.java`).
 2. The Webex CC Virtual Agent (VA) Client Application will start up as a **gRPC Client**(`run ConnectorClientVA.java`) and open a secure gRPC connection with the Server Application.
-3. When a caller calls, the Client Application signals to the Dialog Connector to start the conversation by creating a new conversation (`conversation_id`) and sending a `StreamingAnalyzeContentRequest` to the Server Application with `EventType: CALL_START`. The `conversation_id` is used for the entire conversation between the Caller (Webex CC VA Client Application) and Virtual Agent (Server Application). The request is sent without any audio data.
-4. `EventType: CALL_START` can be used by the connector to start the session with its AI Service and return a response back to the Client using `StreamingAnalyzeContentResponse`. It could contain response payloads, prompts, NLU data, and input mode for handling the next interactions from the Caller. Prompts contain the audio which needs to be played to the Caller. It can return one or multiple prompts in a response. Prompts are played one after another at the client side in the sequence of receiving.
+3. When a caller calls, the Client Application signals to the Dialog Connector to start the conversation by creating a new conversation (`conversation_id`) and sending a `VoiceVARequest` to the Server Application with `EventType: SESSION_START`. The `conversation_id` is used for the entire conversation between the Caller (Webex CC VA Client Application) and Virtual Agent (Server Application). The request is sent without any audio data.
+4. `EventType: SESSION_START` can be used by the connector to start the session with its AI Service and return a response back to the Client using `ViceVAResponse`. It could contain response payloads, prompts, NLU data, and input mode for handling the next interactions from the Caller. Prompts contain the audio which needs to be played to the Caller. It can return one or multiple prompts in a response. Prompts are played one after another at the client side in the sequence of receiving.
 
    <img src="./src/main/resources/images/VADialogConnectorSimulatorStep1.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
 
@@ -142,16 +142,16 @@ Verify the Installation by opening a new terminal and run:
     - If the input mode is `dtmf`, the Client Application will wait for the DTMF input from the Caller.
     - If the input mode is `voice`, the Client Application will wait for the voice input from the Caller.
     - If the input mode is `dtmf_and_voice`, the Client Application will start streaming voice input from the Caller.
-3. On detecting voice, the Server sends a `StreamingRecognitionResult.EVENT_START_OF_INPUT` to the Client Application to indicate that the Caller is providing voice input and to stop playing the prompt.
-4. Once the Caller finishes speaking, the Server detects silence and sends a `StreamingRecognitionResult.EVENT_END_OF_INPUT` to the Client Application to indicate that the Caller has finished speaking.
-5. The Server processes the Caller's request and then sends back a `StreamingAnalyzeContentResponse.VirtualAgentResult` to the Client Application with a new set of prompts, NLU data, and input mode for handling the next interactions.
+3. On detecting voice, the Server sends a `EVENT_START_OF_INPUT` to the Client Application to indicate that the Caller is providing voice input and to stop playing the prompt.
+4. Once the Caller finishes speaking, the Server detects silence and sends a `EVENT_END_OF_INPUT` to the Client Application to indicate that the Caller has finished speaking.
+5. The Server processes the Caller's request and then sends back a `VoiceVAResponse` to the Client Application with a new set of prompts, NLU data, and input mode for handling the next interactions.
 
    <img src="./src/main/resources/images/VADialogConnectorSimulatorStep2.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
 
 #### Step 3. Stop the Conversation
 1. When the conversation ends between the Caller and Virtual Agent, the Caller can disconnect the call.
-    - The Client Application sends a `StreamingAnalyzeContentRequest` to the Server Application with `EventType: CALL_END`.
-    - `EventType: CALL_END` can be used by the Server Application to close the session with its AI Service and return a response back to the Client using `StreamingAnalyzeContentResponse`.
+    - The Client Application sends a `StreamingAnalyzeContentRequest` to the Server Application with `EventType: SESSION_END`.
+    - `EventType: SESSION_END` can be used by the Server Application to close the session with its AI Service and return a response back to the Client using `VoiceVAResponse`.
 2. Similarly, the Virtual Agent can disconnect the call as well using any of the below Exit events as part of `StreamingAnalyzeContentResponse`.
     - **Call End Event**: Sent when the Server Application wants to disconnect the call from the Virtual Agent side.
     - **Agent Transfer Event**: Sent when the Virtual Agent wants to transfer the call to a human agent.
@@ -166,8 +166,7 @@ Verify the Installation by opening a new terminal and run:
 # Glossary
 * **Prompts**: The API response will provide the barge-in status of the prompts to be played. Each prompt will indicate if it is barge-in enabled or disabled. The first barge-in enabled prompt in the sequence will make all subsequent prompts barge-in enabled. The Client will play the non-barge-in prompts independently.
 * **Prompt Duration**: The Client will also need to set the total duration of barge-in enabled prompts so that the recognizer can wait for this duration.
-* **START_OF_SPEECH**: The Client will send the START_OF_SPEECH event to the Server when the user utters a first utterance.
-* **Barge-In**: When the Client receives the START_OF_SPEECH event, it will act as an indicator for the Client to barge-in the prompt and continue streaming.
+* **Barge-In**: When the Client receives the START_OF_INPUT event, it will act as an indicator for the Client to barge-in the prompt and continue streaming.
 * **Timeout**:  The recognizer will wait for user input based on the timer configured after the prompt finishes. If the user does not provide any input in this duration, the input will time out, resulting in a no-input event.
-* **END_OF_SPEECH**: If the user has finished speaking and has taken a pause or has entered all the digits, the Client will receive the END_OF_SPEECH event, indicating to the Client to stop streaming.
+* **END_OF_INPUT**: If the user has finished speaking and has taken a pause or has entered all the digits, the Client will receive the END_OF_INPUT event, indicating to the Client to stop streaming.
 
