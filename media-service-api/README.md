@@ -1,4 +1,4 @@
-**Note:** *These APIs are not open for public consumption, currently these are in Beta under trial with selected partners. For any new request to use these APIs please reach out to Cisco on [ccai-connectors@cisco.com](mailto:ccai-connectors@cisco.com) with business use case.*
+**Note:** *These APIs are not open for public consumption, offer has to be procurred for your org in order to use these services. For any new request to use these APIs please reach out to Cisco on [ccai-connectors@cisco.com](mailto:ccai-connectors@cisco.com) with business use case.*
 
 # Architecture
 
@@ -37,7 +37,7 @@ Response: The response will need to populate the generic params defined in the p
 Features: The request will also carry the desired features needed on the incoming request. The response object should return the responses accordingly.
 # Authentication
 Provider to provide a mechanism to create a tenant specific auth key / token. Which will be onboarded during Onboarding. This key/token will be offered by Orchestrator to External Connector for Authentication, it will also be used by External Connector to identify the tenant and billing.
-For Non-CASPRx provider jws token will be used.
+For Non-CASPRx provider jws token will be used which will be registered by provoder.
 # Serviceability
 Each Provider endpoint to expose certain APIs to monitor the health of endpoint.
 https://<Service endpoint>/<service Name>/v1/ping
