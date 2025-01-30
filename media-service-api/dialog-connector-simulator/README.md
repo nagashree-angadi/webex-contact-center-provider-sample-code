@@ -134,7 +134,7 @@ Verify the Installation by opening a new terminal and run:
 3. When a caller calls, the Client Application signals to the Dialog Connector to start the conversation by creating a new conversation (`conversation_id`) and sending a `VoiceVARequest` to the Server Application with `EventType: SESSION_START`. The `conversation_id` is used for the entire conversation between the Caller (Webex CC VA Client Application) and Virtual Agent (Server Application). The request is sent without any audio data.
 4. `EventType: SESSION_START` can be used by the connector to start the session with its AI Service and return a response back to the Client using `ViceVAResponse`. It could contain response payloads, prompts, NLU data, and input mode for handling the next interactions from the Caller. Prompts contain the audio which needs to be played to the Caller. It can return one or multiple prompts in a response. Prompts are played one after another at the client side in the sequence of receiving.
 
-   <img src="./src/main/resources/images/VADialogConnectorSimulatorStep1.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
+   <img src="./src/main/resources/images/BYOVASampleCodeSequenceDiagramStep1.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
 
 #### Step 2. Continue the Conversation Between the Caller and Virtual Agent
 1. The Client Application, on receiving the prompt, plays it to the Caller and invokes the next dialog based on the input mode received in the response.
@@ -146,7 +146,7 @@ Verify the Installation by opening a new terminal and run:
 4. Once the Caller finishes speaking, the Server detects silence and sends a `EVENT_END_OF_INPUT` to the Client Application to indicate that the Caller has finished speaking.
 5. The Server processes the Caller's request and then sends back a `VoiceVAResponse` to the Client Application with a new set of prompts, NLU data, and input mode for handling the next interactions.
 
-   <img src="./src/main/resources/images/VADialogConnectorSimulatorStep2.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
+   <img src="./src/main/resources/images/BYOVASampleCodeSequenceDiagramStep2.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
 
 #### Step 3. Stop the Conversation
 1. When the conversation ends between the Caller and Virtual Agent, the Caller can disconnect the call.
@@ -159,7 +159,7 @@ Verify the Installation by opening a new terminal and run:
 3. The conversation is complete.
 4. The Server Application can close the gRPC connection with the Client Application.
 
-   <img src="./src/main/resources/images/VADialogConnectorSimulatorStep3.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
+   <img src="./src/main/resources/images/BYOVASampleCodeSequenceDiagramStep3.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
 
 
 
