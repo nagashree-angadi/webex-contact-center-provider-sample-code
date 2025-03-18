@@ -1,5 +1,6 @@
 package com.cisco.wccai.grpc.server;
 
+import com.cisco.wccai.grpc.server.interceptors.AuthorizationServerInterceptor;
 import com.cisco.wccai.grpc.server.interceptors.ServiceExceptionHandler;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -28,6 +29,7 @@ public class GrpcServer {
        Server server = ServerBuilder.forPort(PORT)
                 .intercept(new ServiceExceptionHandler())
                 .addService(new VoiceVAImpl())
+               .intercept(new AuthorizationServerInterceptor())
                 .build()
                 .start();
 
