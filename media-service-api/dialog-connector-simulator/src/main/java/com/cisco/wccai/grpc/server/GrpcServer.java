@@ -27,11 +27,12 @@ public class GrpcServer {
     public static void main(String [] args) throws IOException, InterruptedException {
 
        Server server = ServerBuilder.forPort(PORT)
-                .intercept(new ServiceExceptionHandler())
-                .addService(new VoiceVAImpl())
-               .intercept(new AuthorizationServerInterceptor())
-                .build()
-                .start();
+                                    .intercept(new ServiceExceptionHandler())
+                                    .addService(new VoiceVAImpl())
+                                    .addService(new ConversationAudioForkImpl())
+                                    .intercept(new AuthorizationServerInterceptor())
+                                    .build()
+                                    .start();
 
         LOGGER.info("server started at port : {}", PORT );
 
