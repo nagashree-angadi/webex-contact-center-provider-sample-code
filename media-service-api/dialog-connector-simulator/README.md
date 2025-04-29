@@ -214,6 +214,6 @@ Here,the dialog connector simulator server represents a **gRPC Server Applicatio
 
 <img src="./src/main/resources/images/media-forking-sequence.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
 
-
+> **_NOTE:_** The customer using this feature would write the logic to do further processing of the media received based on their requirements. The simulator code above does not do any further processing with the audio received. 
 
 
