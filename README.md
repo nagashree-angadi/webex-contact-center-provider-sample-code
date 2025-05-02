@@ -7,3 +7,4 @@ Media service APIs can be leveraged for Self Service to offer Conversational IVR
 ## Media Service APIs
 To be used by Providers integrating with CCAI Platform to offer below services-
 1. BYoVA (Bring your own Virtual Agent)
+2. Real time media forking (Human agent - caller interaction)

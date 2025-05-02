@@ -1,4 +1,10 @@
-# Bring your own Virtual Agent
+# Table of Contents
+
+1. [Bring your own virtual agent](#byova-section)
+2. [Media Forking](#media-forking-section)
+
+
+# Bring your own Virtual Agent <a name="byova-section"></a>
 
 The Bring Your Own Virtual Agent Initiative empowers Developers and AI vendors to seamlessly integrate external conversational interface(s) with Webex Contact Center IVR.
 
@@ -169,4 +175,45 @@ Verify the Installation by opening a new terminal and run:
 * **Barge-In**: When the Client receives the START_OF_INPUT event, it will act as an indicator for the Client to barge-in the prompt and continue streaming.
 * **Timeout**:  The recognizer will wait for user input based on the timer configured after the prompt finishes. If the user does not provide any input in this duration, the input will time out, resulting in a no-input event.
 * **END_OF_INPUT**: If the user has finished speaking and has taken a pause or has entered all the digits, the Client will receive the END_OF_INPUT event, indicating to the Client to stop streaming.
+
+# Media Forking <a name="media-forking-section"></a>
+
+This feature allows customers to access the media which is the real time interaction between the human agent and the caller in the Webex Contact Center.
+
+## Dialog Connector Simulator for Media Forking
+
+The Dialog Connector Simulator is a sample code that demonstrates how to receive the media from the Webex Contact Center and do the further processing.
+
+Refer to the [Dialog Connector Simulator Sample Code](https://github.com/CiscoDevNet/webex-contact-center-provider-sample-code/tree/main/media-service-api/dialog-connector-simulator).
+For the interface definition see `src/main/proto/com/cisco/wcc/ccai/media/v1/conversationaudioforking.proto`.
+
+The proto has a bidirectional streaming RPC where the client(Webex contact center) streams the audio during the call and server(customer/partner) sends acknowledgement once when onComplete() is received.
+
+### Code Overview
+
+This sample code offers an overview of the various methods and messages used when the when Webex contact center interacts with the dialog connector simulator server.
+
+Here,the dialog connector simulator server represents a **gRPC Server Application**(see `src/main/java/com/cisco/wccai/grpc/server/GrpcServer.java`) that listens for incoming requests from the Webex Contact Center.
+
+### Development Environment Commands
+1. Install Java 17.
+   Verify the Installation by opening a new terminal and run:
+
+   `java -version`
+2. Compile Protobuf Definitions: This will generate java classes under target/generated-sources/protobuf/grpc-java and target/generated-sources/protobuf/java.
+
+   `cd webex-contact-center-provider-sample-code/media-service-api/dialog-connector-simulator`
+
+   `mvn clean compile`
+3. Build the Main Application:
+
+   `mvn clean install`
+4. The Dialog Connector will start up as a **gRPC Server Application** (`run GrpcServer.java`).
+
+### Detailed Flow with Sequence Diagram
+
+<img src="./src/main/resources/images/media-forking-sequence.jpg" alt="Description" style="box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.1); border: 1px solid #ccc; border-radius: 4px;">
+
+> **_NOTE:_** The customer using this feature would write the logic to do further processing of the media received based on their requirements. The simulator code above does not do any further processing with the audio received. 
+
 
