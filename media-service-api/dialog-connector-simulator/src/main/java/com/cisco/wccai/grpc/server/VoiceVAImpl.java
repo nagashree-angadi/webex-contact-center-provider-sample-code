@@ -6,6 +6,9 @@ import com.cisco.wcc.ccai.media.v1.Voicevirtualagent;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
 
+/*
+    This class is used to provide implementation for Virtual agent and processes the input events or lists the virtual agents.
+*/
 @Slf4j
 public class VoiceVAImpl extends VoiceVirtualAgentGrpc.VoiceVirtualAgentImplBase {
 

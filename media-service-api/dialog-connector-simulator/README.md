@@ -34,32 +34,10 @@ For the interface definition see `src/main/proto/com/cisco/wcc/ccai/media/v1/Voi
 
 *Fig 2: Architectural Diagram for provisioning a Virtual Agent*
 
-To use the Dialog Connector Simulator, follow these onboarding steps(for CASPRx providers):
-
-1. **Integration Setup**:
-    - Use the Webex Contact Center Control Hub to create an integration **Control Hub -> Contact Center -> Integrations**
-    - **Link to integrations** https://admin.webex.com/wxcc/integrations
-    - In the Connector Tab, set up the provider's Connector credentials.
-      ![VA-flow](./src/main/resources/images/VAConnectors.jpg)
-   
-      *Fig 3: Setup Virtual Agent Connectors on the Webex Admin Portal*
-2. **AI Configuration**:
-    - In the Features Tab, create a Contact Center AI Configuration. This configuration is represented by a `configId` and defines the credentials and features to be used.
-      ![VA-flow](./src/main/resources/images/VACCAIConfig.jpg)
-   
-      *Fig 4: Setup a Contact Center AI Configuration entity that connects Webex CC with the external AI service platform*
-   
-3. **Flow Creation**:
-    - Create a flow with the Virtual Agent Voice Activity and use the above created AI Configuration in the Flow Control UI.
-      ![VA-flow](./src/main/resources/images/VAFlowBuilder.jpg)
-      
-   *Fig 5: Use the “Virtual Agent Activity” in the flow designer to select the virtual agent and configure the routing logic of your workflow.*
-4. **EntryPoint Mapping**:
-    - Map the EntryPoint to the newly created flow (EntryPoint -> Routing Strategy -> Flow).
+To use the Dialog Connector Simulator, follow these onboarding steps:
 
 After these steps, the Webex Contact Center (WxCC) will orchestrate the call to a specific provider based on the configuration details.
 
-For Non-CASPRx providers steps are below-
 1. **Service App creation and authorization**:-
 - Service app with spark-admin:dataSource_read/dataSource_write scopes has to be created using dev-portal
 ![image](https://github.com/user-attachments/assets/e9fa0edc-6364-4c49-b5a1-21b8f139b10c)
@@ -87,23 +65,14 @@ After app creation, it has to be submitted to customer org admin for authorizati
 
 
 
-### Prerequisites for Setting Up the Connector
+### Prerequisites for setup
 
 #### Audio Configuration
 - Audio Format Supported: _**wav**_
 - Audio Sampling Rate: _**16kHz/8KHz**_
 - Language: _**en-US**_
-- Encoding Format: _**Linear16/ulaw**_
+- Encoding Format: _**Linear16/mulaw**_
 - Please note, we only support wav or raw audio files, 8/16kHz bit rate, single channel
-
-#### Authentication (Coming Soon)
-Details about this section will be provided in a future update.
-
-#### List Bot API for Dialog Connector Simulator (Optional)
-Each Provider endpoint is recommended to implement an API to return a list of configured bots to be used in
-Flow builder to decide the bot to be used during the call flow with the Customer.
-The API should return the list of bots configured in the system.
-Refer to the ListVirtualAgents API in the ccai-api.proto file.
 
 #### Serviceability
 Each Provider endpoint should expose APIs to monitor the health of the endpoint. The APIs should return the status of the service.

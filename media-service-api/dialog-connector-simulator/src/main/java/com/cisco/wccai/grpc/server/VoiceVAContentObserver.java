@@ -11,6 +11,9 @@ import org.slf4j.MDC;
 import static com.cisco.wccai.grpc.server.VirtualAgentUtils.getCallStartResponse;
 import static com.cisco.wccai.grpc.server.VirtualAgentUtils.getFinalVAResponse;
 
+/*
+    This class is an observer for voice VA requests and implemented based on VoiceVAProto
+*/
 @Slf4j
 public class VoiceVAContentObserver implements StreamObserver<Voicevirtualagent.VoiceVARequest> {
 

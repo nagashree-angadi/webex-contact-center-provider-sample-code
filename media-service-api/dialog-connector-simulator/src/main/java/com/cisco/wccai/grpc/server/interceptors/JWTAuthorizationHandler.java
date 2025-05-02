@@ -37,6 +37,11 @@ public class JWTAuthorizationHandler implements AuthorizationHandler {
     private static final ReentrantLock cacheLock = new ReentrantLock();
 
 
+    /*
+    This method validates the JWS/JWT token received as part of the data source registration response. and used while sending data over gRPC.
+    In this method, we fetch Cisco's public key and validates the signature of the JWS/JWT using this public key.
+    This validates that data over gRPC is coming from Cisco and is not tampered.
+    */
     @Override
     public boolean validateToken(String token) throws AccessTokenException {
         try {

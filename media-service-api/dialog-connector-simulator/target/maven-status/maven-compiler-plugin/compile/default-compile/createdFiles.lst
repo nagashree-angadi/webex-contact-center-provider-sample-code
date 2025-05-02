@@ -1,3 +1,4 @@
+com/cisco/wccai/grpc/server/interceptors/PublicKeyResponse$Key.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$ListVARequest.class
 com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceInput.class
 com/cisco/wccai/grpc/utils/Utils.class
@@ -24,6 +25,7 @@ com/cisco/wcc/ccai/media/v1/VoiceVirtualAgentGrpc$VoiceVirtualAgentMethodDescrip
 com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceVARequestOrBuilder.class
 com/cisco/wcc/ccai/v1/HealthGrpc$HealthFileDescriptorSupplier.class
 com/cisco/wccai/grpc/utils/LoadProperties.class
+com/cisco/wccai/grpc/server/interceptors/AuthorizationHandler.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$TextContent$1.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$OutputEvent$1.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$EventInput$EventType.class
@@ -45,6 +47,7 @@ com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceVAResponse$1.class
 com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceInput$VoiceEncoding.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$ListVAResponseOrBuilder.class
 com/cisco/wcc/ccai/media/v1/VoiceVirtualAgentGrpc$VoiceVirtualAgentBlockingStub.class
+com/cisco/wccai/grpc/server/interceptors/PublicKeyResponse.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$VirtualAgentInfo$1.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$EventInput$EventType$1.class
 com/cisco/wcc/ccai/media/v1/Voicevirtualagent$Prompt$1.class
@@ -81,6 +84,7 @@ com/cisco/wcc/ccai/media/v1/VoiceVirtualAgentGrpc$3.class
 com/cisco/wcc/ccai/v1/HealthGrpc$2.class
 com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceInput$Builder.class
 com/cisco/wcc/ccai/v1/HealthGrpc$HealthBaseDescriptorSupplier.class
+com/cisco/wccai/grpc/server/interceptors/AuthorizationHandlerFactory.class
 com/cisco/wcc/ccai/media/v1/VoiceVirtualAgentGrpc.class
 com/cisco/wcc/ccai/v1/HealthGrpc$HealthBlockingStub.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$DTMFInputConfig.class
@@ -102,6 +106,8 @@ com/cisco/wcc/ccai/media/v1/Voicevirtualagent$Prompt$Builder.class
 com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceVAInputMode$1.class
 com/cisco/wcc/ccai/media/v1/VoiceVirtualAgentGrpc$VoiceVirtualAgentFutureStub.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$DTMFInputsOrBuilder.class
+com/cisco/wccai/grpc/server/interceptors/JWTAuthorizationHandler.class
+com/cisco/wccai/grpc/server/interceptors/AccessTokenException.class
 com/cisco/wccai/grpc/server/VirtualAgentUtils.class
 com/cisco/wccai/grpc/server/VirtualAgentUtils$1.class
 com/cisco/wcc/ccai/v1/HealthGrpc.class
@@ -114,8 +120,10 @@ com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceVAResponse.class
 com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceVARequest$1.class
 com/cisco/wcc/ccai/media/v1/Voicevirtualagent$VoiceInput$1.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$TextContentOrBuilder.class
+com/cisco/wccai/grpc/server/interceptors/AuthorizationHandlerFactory$AuthTokenType.class
 com/cisco/wcc/ccai/media/v1/ByovaCommon$VirtualAgentInfo.class
 com/cisco/wcc/ccai/media/v1/VoiceVirtualAgentGrpc$VoiceVirtualAgentBaseDescriptorSupplier.class
+com/cisco/wccai/grpc/server/interceptors/AuthorizationServerInterceptor.class
 com/cisco/wccai/grpc/client/VoiceVAClientImpl$1.class
 com/cisco/wccai/grpc/server/interceptors/ServiceExceptionHandler.class
 com/cisco/wcc/ccai/v1/HealthGrpc$HealthImplBase.class

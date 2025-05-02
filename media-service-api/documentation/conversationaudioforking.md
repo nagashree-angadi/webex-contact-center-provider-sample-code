@@ -4,13 +4,13 @@
 ## Table of Contents
 
 - [conversationaudioforking.proto](#conversationaudioforking-proto)
-    - [AudioStream](#com-cisco-wcc-ccai-media-v1-AudioStream)
-    - [ConversationAudioForkingRequest](#com-cisco-wcc-ccai-media-v1-ConversationAudioForkingRequest)
-    - [ConversationAudioForkingRequest.AdditionalInfoEntry](#com-cisco-wcc-ccai-media-v1-ConversationAudioForkingRequest-AdditionalInfoEntry)
-    - [ConversationAudioForkingResponse](#com-cisco-wcc-ccai-media-v1-ConversationAudioForkingResponse)
-  
-    - [ConversationAudio](#com-cisco-wcc-ccai-media-v1-ConversationAudio)
-  
+  - [AudioStream](#com-cisco-wcc-ccai-media-v1-AudioStream)
+  - [ConversationAudioForkingRequest](#com-cisco-wcc-ccai-media-v1-ConversationAudioForkingRequest)
+  - [ConversationAudioForkingRequest.AdditionalInfoEntry](#com-cisco-wcc-ccai-media-v1-ConversationAudioForkingRequest-AdditionalInfoEntry)
+  - [ConversationAudioForkingResponse](#com-cisco-wcc-ccai-media-v1-ConversationAudioForkingResponse)
+
+  - [ConversationAudio](#com-cisco-wcc-ccai-media-v1-ConversationAudio)
+
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -91,11 +91,11 @@ Response message for server to send acknowledgement/status to the client.
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="com-cisco-wcc-ccai-media-v1-ConversationAudio"></a>
@@ -107,7 +107,7 @@ Service definition for streaming agent and caller audio.
 | ----------- | ------------ | ------------- | ------------|
 | StreamConversationAudio | [ConversationAudioForkingRequest](#com-cisco-wcc-ccai-media-v1-ConversationAudioForkingRequest) stream | [ConversationAudioForkingResponse](#com-cisco-wcc-ccai-media-v1-ConversationAudioForkingResponse) stream | Bidirectional streaming RPC where the client streams the audio during the call and server sends acknowledgement once per call when onComplete() is received. |
 
- 
+
 
 
 

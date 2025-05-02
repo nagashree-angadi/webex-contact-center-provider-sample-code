@@ -14,6 +14,9 @@ import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVAResponse;
 import static com.cisco.wccai.grpc.server.VirtualAgentUtils.*;
 
 
+/*
+    This class is used to provide implementation for Virtual agent and processes the input events or lists the virtual agents.
+*/
 @Slf4j
 public class VoiceVirtualAgentService {
 
