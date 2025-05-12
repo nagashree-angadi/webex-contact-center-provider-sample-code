@@ -53,7 +53,7 @@ public class VirtualAgentUtils {
                                 .setLanguageCode(EN_US)
                                 .setText("I want to book ticket")
                                 .build())
-                .setIsPartial(true).build();
+                .setResponseType(VoiceVAResponse.ResponseType.PARTIAL).build();
     }
 
     public static VoiceVAResponse getEndOfInputResponse() {
