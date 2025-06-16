@@ -2,16 +2,12 @@ package com.cisco.wccai.grpc.server;
 
 import com.cisco.wcc.ccai.media.v1.ByovaCommon;
 import com.cisco.wcc.ccai.media.v1.Voicevirtualagent;
-import com.cisco.wccai.grpc.model.State;
 import io.grpc.stub.StreamObserver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF;
 import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVARequest;
 import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVAResponse;
 import static com.cisco.wccai.grpc.server.VirtualAgentUtils.*;

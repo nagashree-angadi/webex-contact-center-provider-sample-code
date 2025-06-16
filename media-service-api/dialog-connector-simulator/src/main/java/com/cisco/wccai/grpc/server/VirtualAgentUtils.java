@@ -63,14 +63,14 @@ public class VirtualAgentUtils {
 
     public static VoiceVAResponse getAgentTransferResponse() {
         return VoiceVAResponse.newBuilder()
-                .addPrompts(createPrompt("setting up prompt from dialog simulator for CALL_END event", AGENT_TRANSFER_AUDIO,false))
+                .addPrompts(createPrompt("setting up prompt from dialog simulator for AGENT_TRANSFER event", AGENT_TRANSFER_AUDIO, false))
                 .addOutputEvents(getOutputEvent(ByovaCommon.OutputEvent.EventType.TRANSFER_TO_AGENT))
                 .build();
     }
 
     public static VoiceVAResponse getQueryFinalResponse() {
         return VoiceVAResponse.newBuilder()
-                .addPrompts(createPrompt("Thank you for calling, have a good day", THANK_YOU_AUDIO,false))
+                .addPrompts(createPrompt("Thank you for calling, have a good day", THANK_YOU_AUDIO, false))
                 .setResponseType(VoiceVAResponse.ResponseType.FINAL)
                 .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
                 .build();
@@ -78,7 +78,7 @@ public class VirtualAgentUtils {
 
     public static VoiceVAResponse getQueryChunkResponse() {
         return VoiceVAResponse.newBuilder()
-                .addPrompts(createPrompt("Thank you for calling, have a good day", THANK_YOU_AUDIO,false))
+                .addPrompts(createPrompt("Thank you for calling, have a good day", THANK_YOU_AUDIO, false))
                 .setResponseType(VoiceVAResponse.ResponseType.CHUNK)
                 .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
                 .build();
@@ -86,7 +86,7 @@ public class VirtualAgentUtils {
 
     public static VoiceVAResponse getQueryFinalChunkResponse() {
         return VoiceVAResponse.newBuilder()
-                .addPrompts(createPromptWithEmptyAudio("Thank you for calling, have a good day",false))
+                .addPrompts(createPromptWithEmptyAudio("Thank you for calling, have a good day", false))
                 .setResponseType(VoiceVAResponse.ResponseType.FINAL)
                 .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
                 .build();
@@ -94,7 +94,7 @@ public class VirtualAgentUtils {
 
     public static VoiceVAResponse getNoInputResponse() {
         return VoiceVAResponse.newBuilder()
-                .addPrompts(createPrompt("setting up prompt from dialog simulator for NO_INPUT event", GOOD_BYE_AUDIO,false))
+                .addPrompts(createPrompt("setting up prompt from dialog simulator for NO_INPUT event", GOOD_BYE_AUDIO, false))
                 .addOutputEvents(getOutputEvent(ByovaCommon.OutputEvent.EventType.NO_INPUT))
                 .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
                 .build();
@@ -117,31 +117,28 @@ public class VirtualAgentUtils {
     }
 
     public static VoiceVAResponse getCallEndResponse() {
-        VoiceVAResponse result = VoiceVAResponse.newBuilder()
-                .addPrompts(createPrompt("setting up prompt from dialog simulator for CALL_END event", GOOD_BYE_AUDIO,false))
+        return VoiceVAResponse.newBuilder()
+                .addPrompts(createPrompt("setting up prompt from dialog simulator for CALL_END event", GOOD_BYE_AUDIO, false))
                 .addOutputEvents(getOutputEvent(ByovaCommon.OutputEvent.EventType.SESSION_END))
                 .build();
-        return result;
     }
 
-    public static VoiceVAResponse getFinalVAResponse(boolean isDtmfEvent) {
-        VoiceVAResponse result = VoiceVAResponse.newBuilder()
+    public static VoiceVAResponse getFinalVAResponse() {
+        return VoiceVAResponse.newBuilder()
                 .addPrompts(createPrompt("Thank you for calling the Virtual agent simulator. Have a nice day!", GOOD_BYE_AUDIO))
                 .setSessionTranscript(createTextContent("setting reply text from dialog simulator for final NLU Response"))
                 .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
                 .build();
-        return result;
     }
 
     public static VoiceVAResponse getCallStartResponse() {
-        VoiceVAResponse result = VoiceVAResponse
+        return VoiceVAResponse
                 .newBuilder()
                 .addPrompts(createPrompt("setting prompt from dialog simulator", WELCOME_AUDIO))
                 .setSessionTranscript(createTextContent("Hi ! I'm your virtual agent for ticket booking from dialog simulator. How can I assist you today"))
                 .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
                 .setInputHandlingConfig(inputHandlingConfig(5, 3000, ByovaCommon.DTMFDigits.DTMF_DIGIT_POUND, 10000))
                 .build();
-        return result;
     }
 
     private static Prompt createPrompt(String text, String audioFileName) {
