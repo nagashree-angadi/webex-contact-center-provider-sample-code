@@ -19,8 +19,9 @@ public class VirtualAgentUtils {
     private static final String EN_US = "en-US";
     private static final String WELCOME_AUDIO = "welcome.wav";
     private static final String GOOD_BYE_AUDIO = "good_bye.wav";
+    private static final String THANK_YOU_AUDIO = "thankyou.wav";
 
-    private static final String AGENT_TRANSFER_AUDIO = "agent_transfer.wav";
+    private static final String AGENT_TRANSFER_AUDIO = "agent-transfer.wav";
 
     private VirtualAgentUtils() {
     }
@@ -60,34 +61,43 @@ public class VirtualAgentUtils {
         return VoiceVAResponse.newBuilder().addOutputEvents(getOutputEvent(ByovaCommon.OutputEvent.EventType.END_OF_INPUT)).build();
     }
 
-    public static Optional<VoiceVAResponse> getFinalDTMFResponse(State state) {
-        VoiceVAResponse.Builder result = VoiceVAResponse.newBuilder();
+    public static VoiceVAResponse getAgentTransferResponse() {
+        return VoiceVAResponse.newBuilder()
+                .addPrompts(createPrompt("setting up prompt from dialog simulator for CALL_END event", AGENT_TRANSFER_AUDIO,false))
+                .addOutputEvents(getOutputEvent(ByovaCommon.OutputEvent.EventType.TRANSFER_TO_AGENT))
+                .build();
+    }
 
-        if (state == State.CALL_END) {
-            log.info("Processing DTMF final response, sending SESSION_END event");
-            ByovaCommon.OutputEvent outputEvent = getOutputEvent(ByovaCommon.OutputEvent.EventType.SESSION_END);
-            result.addOutputEvents(outputEvent);
-            result.addPrompts(createPrompt("Thank you for calling the Virtual agent simulator. Have a nice day!", GOOD_BYE_AUDIO));
-            result.addPrompts(createPrompt("Thank you for calling the Virtual agent simulator. Have a nice day!", GOOD_BYE_AUDIO, false));
-            result.setSessionTranscript(createTextContent("setting reply text from dialog simulator for final NLU Response"));
-        } else if (state == State.AGENT_TRANSFER) {
-            log.info("Processing DTMF final response, sending TRANSFER_TO_AGENT event");
-            ByovaCommon.OutputEvent outputEvent = getOutputEvent(ByovaCommon.OutputEvent.EventType.TRANSFER_TO_AGENT);
-            result.addOutputEvents(outputEvent);
-            result.addPrompts(createPrompt("Transferring to the agent", AGENT_TRANSFER_AUDIO,false));
-            result.addPrompts(createPrompt("Transferring to the agent", AGENT_TRANSFER_AUDIO, true));
-            result.setSessionTranscript(createTextContent("setting reply text from dialog simulator for final NLU Response"));
-        } else {
-            result.addPrompts(createPrompt("Thank you for calling the Virtual agent simulator. Have a nice day!", GOOD_BYE_AUDIO));
-            log.info("Processing DTMF final response, sending NO_INPUT event");
-            ByovaCommon.OutputEvent outputEvent = getOutputEvent(ByovaCommon.OutputEvent.EventType.NO_INPUT);
-            result.addOutputEvents(outputEvent);
-            result.addPrompts(createPrompt("Thank you for calling the Virtual agent simulator. Have a nice day!", GOOD_BYE_AUDIO, false));
-            result.setSessionTranscript(createTextContent("setting reply text from dialog simulator for final NLU Response"));
-            result.setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_EVENT_DTMF);
-        }
+    public static VoiceVAResponse getQueryFinalResponse() {
+        return VoiceVAResponse.newBuilder()
+                .addPrompts(createPrompt("Thank you for calling, have a good day", THANK_YOU_AUDIO,false))
+                .setResponseType(VoiceVAResponse.ResponseType.FINAL)
+                .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
+                .build();
+    }
 
-        return Optional.of(result.build());
+    public static VoiceVAResponse getQueryChunkResponse() {
+        return VoiceVAResponse.newBuilder()
+                .addPrompts(createPrompt("Thank you for calling, have a good day", THANK_YOU_AUDIO,false))
+                .setResponseType(VoiceVAResponse.ResponseType.CHUNK)
+                .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
+                .build();
+    }
+
+    public static VoiceVAResponse getQueryFinalChunkResponse() {
+        return VoiceVAResponse.newBuilder()
+                .addPrompts(createPromptWithEmptyAudio("Thank you for calling, have a good day",false))
+                .setResponseType(VoiceVAResponse.ResponseType.FINAL)
+                .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
+                .build();
+    }
+
+    public static VoiceVAResponse getNoInputResponse() {
+        return VoiceVAResponse.newBuilder()
+                .addPrompts(createPrompt("setting up prompt from dialog simulator for NO_INPUT event", GOOD_BYE_AUDIO,false))
+                .addOutputEvents(getOutputEvent(ByovaCommon.OutputEvent.EventType.NO_INPUT))
+                .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
+                .build();
     }
 
     private static Prompt createPrompt(String text, String audioFileName, Boolean barginEnabled) {
@@ -98,10 +108,18 @@ public class VirtualAgentUtils {
                 .build();
     }
 
+    private static Prompt createPromptWithEmptyAudio(String text, Boolean barginEnabled) {
+        return Prompt.newBuilder()
+                .setText(text)
+                .setAudioContent(ByteString.EMPTY)
+                .setIsBargeInEnabled(barginEnabled)
+                .build();
+    }
+
     public static VoiceVAResponse getCallEndResponse() {
         VoiceVAResponse result = VoiceVAResponse.newBuilder()
-                .addPrompts(createPrompt("setting up prompt from dialog simulator for CALL_END event", WELCOME_AUDIO,false))
-                .addOutputEvents(getOutputEvent(ByovaCommon.OutputEvent.EventType.END_OF_INPUT))
+                .addPrompts(createPrompt("setting up prompt from dialog simulator for CALL_END event", GOOD_BYE_AUDIO,false))
+                .addOutputEvents(getOutputEvent(ByovaCommon.OutputEvent.EventType.SESSION_END))
                 .build();
         return result;
     }
@@ -110,7 +128,7 @@ public class VirtualAgentUtils {
         VoiceVAResponse result = VoiceVAResponse.newBuilder()
                 .addPrompts(createPrompt("Thank you for calling the Virtual agent simulator. Have a nice day!", GOOD_BYE_AUDIO))
                 .setSessionTranscript(createTextContent("setting reply text from dialog simulator for final NLU Response"))
-                .setInputMode(isDtmfEvent ? Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF : Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE)
+                .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
                 .build();
         return result;
     }
@@ -121,6 +139,7 @@ public class VirtualAgentUtils {
                 .addPrompts(createPrompt("setting prompt from dialog simulator", WELCOME_AUDIO))
                 .setSessionTranscript(createTextContent("Hi ! I'm your virtual agent for ticket booking from dialog simulator. How can I assist you today"))
                 .setInputMode(Voicevirtualagent.VoiceVAInputMode.INPUT_VOICE_DTMF)
+                .setInputHandlingConfig(inputHandlingConfig(5, 3000, ByovaCommon.DTMFDigits.DTMF_DIGIT_POUND, 10000))
                 .build();
         return result;
     }
@@ -144,7 +163,7 @@ public class VirtualAgentUtils {
     private static ByteString getAudioContent(String fileName) {
         try {
             return switch (fileName) {
-                case WELCOME_AUDIO, GOOD_BYE_AUDIO ->
+                case WELCOME_AUDIO, GOOD_BYE_AUDIO, AGENT_TRANSFER_AUDIO ->
                         ByteString.readFrom(VirtualAgentUtils.class.getClassLoader().getResourceAsStream("audio/" + fileName));
                 default -> ByteString.EMPTY;
             };
@@ -152,6 +171,23 @@ public class VirtualAgentUtils {
             log.error("Error reading audio content from file: {}", fileName, e);
         }
         return ByteString.EMPTY;
+    }
+
+    public static ByovaCommon.InputHandlingConfig inputHandlingConfig(int dtmfInputLength, int interDigitTimeoutMillis, ByovaCommon.DTMFDigits termChar, int inputTimeoutMillis) {
+        return ByovaCommon.InputHandlingConfig.newBuilder()
+                .setDtmfConfig(dtmfInputConfig(dtmfInputLength, interDigitTimeoutMillis, termChar))
+                .setSpeechTimers(ByovaCommon.InputSpeechTimers.newBuilder()
+                        .setCompleteTimeoutMsec(inputTimeoutMillis)
+                        .build())
+                .build();
+    }
+
+    public static ByovaCommon.DTMFInputConfig dtmfInputConfig(int dtmfInputLength, int interDigitTimeoutMillis, ByovaCommon.DTMFDigits termChar) {
+        return ByovaCommon.DTMFInputConfig.newBuilder()
+                .setDtmfInputLength(dtmfInputLength)
+                .setInterDigitTimeoutMsec(interDigitTimeoutMillis)
+                .setTermchar(termChar)
+                .build();
     }
 
 }
