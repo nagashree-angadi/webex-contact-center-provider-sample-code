@@ -1,13 +1,12 @@
 package com.cisco.wccai.grpc.server;
 
 import com.cisco.wcc.ccai.media.v1.ByovaCommon;
-import com.cisco.wccai.grpc.model.State;
+import com.cisco.wcc.ccai.media.v1.Voicevirtualagent;
 import io.grpc.stub.StreamObserver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.List;
 
 import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVARequest;
 import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVAResponse;
@@ -19,32 +18,21 @@ import static com.cisco.wccai.grpc.server.VirtualAgentUtils.*;
 */
 @Slf4j
 public class VoiceVirtualAgentService {
-
-    private static final int CHUNK_SIZE =  4080;
-    private static final int STREAM_INTERVAL_MS = 500;
-    private boolean isFirstTimeDTMF = true;
-    @Getter
-    private boolean isDtmfReceived = false;
-    private boolean isTermCharacter = true;
     private boolean isStartOfInput = false;
-    private int totalChunkReceivedSoFarInBytesVB = 0;
-    private int totalSizeVB = 0;
-    private int totalChunkReceivedSoFarInBytesGateway = 0;
-    private int totalSizeGateway = 0;
     @Getter
     private boolean isEndOfInput = false;
-    private HashMap<String, StringBuilder> dtmfInputBuffer = new LinkedHashMap<>();
+    private boolean isWavAudio = true; // Set this flag to false to enable CHUNK streaming
+    private long audioBufferSize = 0;
 
     public void processVoiceVirtualAgentRequest(VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> voiceVAResponse) {
-        String conversationId = voiceVARequest.getConversationId();
         switch (voiceVARequest.getVoiceVaInputTypeCase()) {
             case EVENT_INPUT -> {
                 log.info("Received voice virtual event input");
                 processEventInput(voiceVARequest.getEventInput().getEventType(), voiceVARequest.getConversationId(), voiceVAResponse);
             }
             case DTMF_INPUT -> {
-                log.info("Received voice virtual dtmf input");
-                processDtmfInput(conversationId, voiceVARequest, voiceVAResponse);
+                log.info("Received dtmf input");
+                processDtmfInput(voiceVARequest, voiceVAResponse);
             }
             case AUDIO_INPUT -> {
                 log.info("Received voice virtual audio input");
@@ -57,41 +45,31 @@ public class VoiceVirtualAgentService {
         }
     }
 
-    private void processDtmfInput(String conversationId,VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> voiceVAResponse) {
-        var state = getDTMFState(voiceVARequest.getDtmfInput().getDtmfEventsList().get(0).getNumber(), conversationId);
-        getDTMFResponse(state).ifPresent(voiceVAResponse::onNext);
+    private void processDtmfInput(VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> responseStreamObserver) {
+        String conversationId = voiceVARequest.getConversationId();
+        log.info("Received DTMF input for conversationId: {}", conversationId);
+
+        List<ByovaCommon.DTMFDigits> dtmfDigits = voiceVARequest.getDtmfInput().getDtmfEventsList();
+
+        if (dtmfDigits.isEmpty()) {
+            log.info("Received empty DTMF input for conversationId: {}", conversationId);
+            responseStreamObserver.onNext(getNoInputResponse());
+        }
+
+        // send audio bytes and events based on the DTMF input
+        mapDtmfInputToEvents(conversationId, dtmfDigits, responseStreamObserver);
     }
 
-    private State getDTMFState(int dtmfNo, String conversationId) {
-        State resultState = null;
-        if (isFirstTimeDTMF) {
-            isDtmfReceived = true;
-            isFirstTimeDTMF = false;
-            log.info("Received dtmf: {} as first character for conversationId : {} , sending START_OF_INPUT event ", dtmfNo, conversationId);
-            resultState = State.START_OF_INPUT;
-        } else if ((ByovaCommon.DTMFDigits.DTMF_DIGIT_POUND.getNumber() == dtmfNo) && isTermCharacter) {
-            log.info("Received dtmf: {} as term character for conversationId : {} , sending END_OF_INPUT event", dtmfNo, conversationId);
-            isTermCharacter = false;
-            resultState = State.END_OF_INPUT;
+    public void mapDtmfInputToEvents(String conversationId, List<ByovaCommon.DTMFDigits> dtmfDigits, StreamObserver<Voicevirtualagent.VoiceVAResponse> responseStreamObserver) {
+        for (ByovaCommon.DTMFDigits dtmfDigit : dtmfDigits) {
+            log.info("Received DTMF digit: {} for conversationId: {}", dtmfDigit, conversationId);
+            switch (dtmfDigit) {
+                case DTMF_DIGIT_NINE -> responseStreamObserver.onNext(getAgentTransferResponse());
+                case DTMF_DIGIT_STAR -> responseStreamObserver.onNext(getCallEndResponse());
+                default ->
+                        log.info("Received unknown DTMF digit: {} for conversationId: {}", dtmfDigit, conversationId);
+            }
         }
-        return resultState;
-    }
-
-    public void getFinalDTMF(String conversationId, StreamObserver<VoiceVAResponse> voiceVAResponse) {
-        log.info("Processing DTMF final response onComplete");
-
-        State finalState = null;
-        String dtmfInput = dtmfInputBuffer.get(conversationId).toString();
-        if (ByovaCommon.DTMFDigits.DTMF_DIGIT_FIVE.name().equals(dtmfInput)) {
-            finalState = State.AGENT_TRANSFER;
-        } else if (ByovaCommon.DTMFDigits.DTMF_DIGIT_SIX.name().equals(dtmfInput)) {
-            finalState = State.CALL_END;
-        }
-
-        if (null != finalState) {
-            getFinalDTMFResponse(finalState).ifPresent(voiceVAResponse::onNext);
-        }
-        dtmfInputBuffer.remove(conversationId);
     }
 
     private void processAudioInput(VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> voiceVAResponse) {
@@ -100,72 +78,55 @@ public class VoiceVirtualAgentService {
             log.info("cleaning up initial audio packets");
             return;
         }
-        if (callerAudioSize == CHUNK_SIZE && STREAM_INTERVAL_MS == 500) {
-            vaResponse(voiceVARequest, voiceVAResponse);
-        } else if (callerAudioSize == CHUNK_SIZE && STREAM_INTERVAL_MS == 20) {
-            gatewayResponse(voiceVARequest, voiceVAResponse);
-        } else {
-            voiceVAResponse.onError(new IllegalArgumentException("Invalid audio size received from client for VA : " + callerAudioSize));
-        }
+        processCallerAudio(voiceVARequest, voiceVAResponse);
     }
 
     private void processEventInput(ByovaCommon.EventInput.EventType eventInput, String conversationId, StreamObserver<VoiceVAResponse> voiceVAResponse) {
         switch (eventInput) {
-            case SESSION_END -> {
-                log.info("Received SESSION_END event for conversationId : {} ", conversationId);
-                voiceVAResponse.onNext(getCallEndResponse());
-            }
-            case SESSION_START -> log.info("Received SESSION_START event for conversationId : {} ", conversationId);
-            default -> {
-                log.info("Unsupported event : {} type received for conversationId : {} ", eventInput, conversationId);
-                voiceVAResponse.onNext(getVoiceVaResponseForOutPutEvent(ByovaCommon.OutputEvent.EventType.UNSPECIFIED_EVENT));
-            }
+            case SESSION_END ->
+                    log.info("Received SESSION_END event for conversationId : {} ", conversationId);
+            case SESSION_START ->
+                    log.info("Received SESSION_START event for conversationId : {} ", conversationId);
+            default ->
+                    log.info("Ignoring event : {} for conversationId : {} ", eventInput, conversationId);
         }
     }
 
-    private void gatewayResponse(VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> voiceVAResponse) {
+    private void processCallerAudio(VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> voiceVAResponse) {
+        // if 16000 bytes has silence then clear the buffer.
+        if (audioBufferSize < 16000) {
+            audioBufferSize += voiceVARequest.getAudioInput().getCallerAudio().size();
+            log.info("Setting initial audio buffer size to: {} bytes for conversationId: {}", audioBufferSize, voiceVARequest.getConversationId());
+            return;
+        }
+        // send START_OF_INPUT once speech is detected
         if (!isStartOfInput) {
             isStartOfInput = true;
-            log.info("writing start of input event to gateway client");
+            log.info("Sending START_OF_INPUT event.");
             voiceVAResponse.onNext(startOfInputResponse());
         }
-        var audioSize = voiceVARequest.getAudioInput().getCallerAudio().size();
-        totalChunkReceivedSoFarInBytesGateway += audioSize;
-        totalSizeGateway += audioSize;
-        while (totalChunkReceivedSoFarInBytesGateway >= 100028) { // 100028 = 100KB, which means for every 100KB of audio, we are sending partial recognition response
-            log.info("writing partial recognition response to gateway client");
-            voiceVAResponse.onNext(getPartialRecognitionResponse());
-            totalChunkReceivedSoFarInBytesGateway = Math.max(0, totalChunkReceivedSoFarInBytesGateway - 100028);
-        }
-        // sending END_OF_INPUT when user takes pause ( Ex. END_OF_SINGLE_UTTERANCE for Google).
-        // sending partial recognition responses
-        if (!isEndOfInput && totalSizeGateway > 781 * 1024) { // 781 * 1024 = 800KB, which means we are expecting the audio of almost 800KB
-            isEndOfInput = true;
-            log.info("writing end of input event to gateway client");
-            voiceVAResponse.onNext(getEndOfInputResponse());
-        }
-    }
 
-    private void vaResponse(VoiceVARequest voiceVARequest, StreamObserver<VoiceVAResponse> voiceVAResponse) {
-        // upon receiving the first interim response, sending START_OF_INPUT event, will be used by client for barge-in.
-        if (!isStartOfInput) {
-            isStartOfInput = true;
-            log.info("writing start of input event to VA client");
-            voiceVAResponse.onNext(startOfInputResponse());
-        }
-        // sending partial recognition responses
-        var audioSize = voiceVARequest.getAudioInput().getCallerAudio().size();
-        totalChunkReceivedSoFarInBytesVB += audioSize;
-        totalSizeVB += audioSize;
-        while (totalChunkReceivedSoFarInBytesVB >= CHUNK_SIZE) {
-            voiceVAResponse.onNext(getPartialRecognitionResponse());
-            totalChunkReceivedSoFarInBytesGateway = Math.max(0, totalChunkReceivedSoFarInBytesGateway - CHUNK_SIZE);
-        }
-        // sending END_OF_INPUT when user takes pause ( Ex. END_OF_SINGLE_UTTERANCE for Google).
-        if (!isEndOfInput) {
+        // Captures the caller audio here and process it.
+        int audioSize = voiceVARequest.getAudioInput().getCallerAudio().size();
+        log.info("Received audio input of size: {} bytes for conversationId: {}", audioSize, voiceVARequest.getConversationId());
+
+        // send END_OF_INPUT once silence is detected
+        if (isStartOfInput & !isEndOfInput) {
             isEndOfInput = true;
-            log.info("writing end of input event to VB client");
+            log.info("Sending END_OF_INPUT event.");
             voiceVAResponse.onNext(getEndOfInputResponse());
         }
+        // send the caller's query response
+        if (isWavAudio) {
+            log.info("Sending response with WAV audio content.");
+            voiceVAResponse.onNext(getQueryFinalResponse());
+        } else {
+            log.info("Sending response with CHUNK audio content.");
+            voiceVAResponse.onNext(getQueryChunkResponse());
+            voiceVAResponse.onNext(getQueryChunkResponse());
+            voiceVAResponse.onNext(getQueryFinalChunkResponse());
+        }
+        log.info("Buffered audio processed, clearing the audio buffer for conversationId: {}", voiceVARequest.getConversationId());
+        audioBufferSize = 0;
     }
 }

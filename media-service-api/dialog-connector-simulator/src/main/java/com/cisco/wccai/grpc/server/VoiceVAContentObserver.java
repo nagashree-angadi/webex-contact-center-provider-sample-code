@@ -2,11 +2,8 @@ package com.cisco.wccai.grpc.server;
 
 import com.cisco.wcc.ccai.media.v1.ByovaCommon;
 import com.cisco.wcc.ccai.media.v1.Voicevirtualagent;
-import com.cisco.wccai.grpc.utils.Utils;
 import io.grpc.stub.StreamObserver;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.MDC;
 
 import static com.cisco.wccai.grpc.server.VirtualAgentUtils.getCallStartResponse;
 import static com.cisco.wccai.grpc.server.VirtualAgentUtils.getFinalVAResponse;
@@ -49,16 +46,13 @@ public class VoiceVAContentObserver implements StreamObserver<Voicevirtualagent.
 
         if (voiceVirtualAgentService.isEndOfInput()) {
             log.info("writing response from onCompleted to client for IS_END_OF_INPUT event, conversationId : {}", conversationId);
-            responseObserver.onNext(getFinalVAResponse(false));
+            responseObserver.onNext(getFinalVAResponse());
         } else if (voiceVARequest.getEventInput().getEventType() == ByovaCommon.EventInput.EventType.SESSION_END) {
             log.info("writing empty response from onCompleted to client for SESSION_END event, conversationId : {}", conversationId);
             responseObserver.onNext(Voicevirtualagent.VoiceVAResponse.newBuilder().build());
         } else if (voiceVARequest.getEventInput().getEventType() == ByovaCommon.EventInput.EventType.SESSION_START) {
             log.info("writing response from onCompleted to client for SESSION_START event, conversationId : {}", conversationId);
             responseObserver.onNext(getCallStartResponse());
-        } else if (voiceVirtualAgentService.isDtmfReceived()) {
-        log.info("onCompleted at end of DTMF input, conversationId : {}", conversationId);
-        voiceVirtualAgentService.getFinalDTMF(conversationId, responseObserver);
         } else {
         log.info("Received oncomplete, But there is no defined state");
         }
