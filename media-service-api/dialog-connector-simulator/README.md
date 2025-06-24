@@ -7,22 +7,9 @@
 # Bring your own Virtual Agent <a name="byova-section"></a>
 
 The Bring Your Own Virtual Agent Initiative empowers Developers and AI vendors to seamlessly integrate external conversational interface(s) with Webex Contact Center IVR.
+More details of this explained in [file](../../README.md)
 
-## What is a Voice Virtual Agent?
-
-To summarize, the voice virtual agent connects to a caller on a voice call and performs the following actions:
-   - Transcribes the caller's **speech to text** for AI processing.
-   - Utilizes **Natural Language Understanding** to identify the caller's intent.
-   - Maps the identified **intent** to an existing workflow (OR) uses **Generative AI** to create a text response.
-   - Converts the generated **text to speech** which is then prompted to the caller back.
-   - For escalated calls, provides the human agent with context by supplying the virtual agent's transcript or a summary.
-   - Post-call data, including Total Call Handled Time, Call Resolution, Caller Intent, etc. is available in Webex Analyzer.
-
-![VA-flow](./src/main/resources/images/VACallFlowWithEscalation.jpg)
-
-*Fig 1: A sample virtual agent call that is escalated to a human agent*
-
-## Dialog Connector Simulator
+## Using Dialog Connector Simulator for BYoVA
 The Dialog Connector Simulator is a sample code that demonstrates how to integrate an external conversational interface with Webex Contact Center IVR.
 
 Refer to the [Dialog Connector Simulator Sample Code](https://github.com/CiscoDevNet/webex-contact-center-ai-sample-code/tree/main/provider-api/dialog-connector-simulator).
@@ -167,12 +154,11 @@ Call can be terminated, transferred to an agent, or a custom action can be perfo
 
 
 
-
 # Media Forking <a name="media-forking-section"></a>
 
 This feature allows customers to access the media which is the real time interaction between the human agent and the caller in the Webex Contact Center.
 
-## Dialog Connector Simulator for Media Forking
+## Using Dialog Connector Simulator for Media Forking
 
 The Dialog Connector Simulator is a sample code that demonstrates how to receive the media from the Webex Contact Center and do the further processing.
 
