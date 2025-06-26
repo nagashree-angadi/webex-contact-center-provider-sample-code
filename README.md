@@ -37,7 +37,7 @@ To summarize, the voice virtual agent connects to a caller on a voice call and p
 *Fig 1: A sample virtual agent call that is escalated to a human agent*
 
 **Communication Protocol** - gRPC
-**Proto defintion** - voiceVirtualagent.proto(path- dialogue-connector-simulator/src/main/proto/com/cisco/wcc/ccai/media/v1)
+**Proto definition** - voiceVirtualagent.proto(path- dialogue-connector-simulator/src/main/proto/com/cisco/wcc/ccai/media/v1)
 Further details related to APIs, use cases and usage is defined in separate readme file located [Here](https://github.com/CiscoDevNet/webex-contact-center-provider-sample-code/tree/main/media-service-api/dialog-connector-simulator)
 
 ## Real Time Media Forking <a name="media-forking-section"></a>
