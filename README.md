@@ -398,9 +398,9 @@ Response:
 
 
 # References <a name="references-section"></a>
-1. **Service apps** - https://developer.webex-cx.com/documentation/service-apps
-2. **Data Sources** - https://developer.webex-cx.com/documentation/guides/bring-your-own-data-source
-3. **BYoVA** - https://developer.webex-cx.com/documentation/guides/bring-your-own-virtual-agent
+1. **Service apps** - [https://developer.webex-cx.com/documentation/service-apps](https://developer.webex.com/messaging/docs/service-apps)
+2. **Data Sources** - [https://developer.webex-cx.com/documentation/guides/bring-your-own-data-source](https://developer.webex.com/create/docs/bring-your-own-datasource)
+3. **BYoVA** - [https://developer.webex-cx.com/documentation/guides/bring-your-own-virtual-agent](https://developer.webex.com/webex-contact-center/docs/bring-your-own-virtual-agent)
 4. **Schema defintions** - https://github.com/webex/dataSourceSchemas/tree/main/Services
 5. **Sample Code** -
 The Dialog Connector Simulator is a sample code that demonstrates how to integrate an external conversational interface with Webex Contact Center IVR.
