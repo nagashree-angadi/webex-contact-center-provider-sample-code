@@ -51,11 +51,11 @@ Further details related to APIs, use cases and usage is defined in separate read
 Data source is the communication endpoint between webex contact center and Virtual agent application/media forking server(running on vedor's cloud).
 ## Bring Your Own Data Source(BYoDS)
 To register the communication endpoint or **Data Source** with Webex , Partners/Customers need to make use of BYoDS framework and set of APIs provided by this framework.
-More details about this framework and APIs are documented [here](https://developer.webex-cx.com/documentation/guides/bring-your-own-data-source).
+More details about this framework and APIs are documented [here](https://developer.webex.com/webex-contact-center/docs/api/v1/data-sources/register-a-data-source).
 ## Service apps
 BYoVA uses service apps as integration framework, to register the communication endpoint(url)/Data Source with webex.
 Service apps enable you to request admin permission to use Webex Contact Center REST APIs(BYoDS APIs in this case), reducing dependence on a single user's authorization and mitigating any associated risks to your app.
-To know more about service apps, please refer [deveoper-portal](https://developer.webex-cx.com/documentation/service-apps).
+To know more about service apps, please refer [deveoper-portal](https://developer.webex.com/admin/docs/service-apps).
 ## Config and flow
 Config works as an integration on webex contact center platform where partners/customers configure their integrations with us. In case of of BYoVA, the config will be linked to service app and point to the data source registered for communication.
 Flow is the business/activity flow created by admin or flow designer via [control hub](https://admin.webex.com/wxcc/customer-experience/routing-flows/flows)
@@ -76,7 +76,7 @@ Flow is the business/activity flow created by admin or flow designer via [contro
 # Customer/Partner onboarding <a name="byova-onboarding-section"></a>
 ## Creation and authorization of service app
 1. To leverage set of use cases provided by Webex contact center as part of media service APIs, customers need to create a service app by going to dev portal.
-https://developer.webex-cx.com/documentation/service-apps
+https://developer.webex.com/admin/docs/service-apps
 2. Post the service app creation, the app needs to be submitted for org admin approval.
 ![service-app](./media-service-api/dialog-connector-simulator/src/main/resources/images/serviceAppAuthorization.png)
 **3**. Org admin needs to go to Control Hub portal and evaluate the validDomains provided in the service app for the respective use case.
@@ -84,7 +84,7 @@ https://admin.webex.com/apps/serviceapps
 And approve the app if the provided information is validated.
 ![authorization](./media-service-api/dialog-connector-simulator/src/main/resources/images/serviceAppAdminView.png).
 
-**Note**: Please refer [link](https://developer.webex-cx.com/documentation/service-apps) for more details, on service app creation
+**Note**: Please refer [link](https://developer.webex.com/admin/docs/service-apps) for more details, on service app creation
 
 ### Register data source
 Data source is nothing but the external url which would be used for the communication between contact center platform and Virtual agent/Media forking server(hosted on external cloud outside cisco boundary).
@@ -95,7 +95,7 @@ This generated token pair includes access token and refresh token.
 Refresh token can be used to refresh(valid for 90 days) the access token(which is valid for 14 days). Details of this process, along with API details is documented at [Here](https://developer.webex.com/create/docs/integrations#using-the-refresh-token)
 2. Keep these refresh and access token pair safe as this would be required for all data source related operations.
 3. Now copy the access token and register the data source either via developer portal or via API.
-- To do this via developer portal, use [link](https://developer.webex-cx.com/documentation/data-sources)
+- To do this via developer portal, use [link](https://developer.webex.com/webex-contact-center/docs/api/v1/data-sources).
 - To do this via API, below is the sample code
 ```
 curl --request POST \
@@ -129,7 +129,7 @@ Sample response-
 }
 ```
 4. Store the JWS included in the response as this will be sent by contact center client at the time of communication.
-**Note** - It is responsibility of the customer to keep refreshing the data source via PUT API. If the data source is expired(post token life time expiry), the communication will stop working.Refer [link](https://developer.webex-cx.com/documentation/data-sources/v1/update-a-data-source) for more details on API.
+**Note** - It is responsibility of the customer to keep refreshing the data source via PUT API. If the data source is expired(post token life time expiry), the communication will stop working.Refer [link](https://developer.webex.com/webex-contact-center/docs/api/v1/data-sources/update-a-data-source) for more details on API.
 
 ### Config and flow creation
 1. Once the service app is created and authorized, admin needs to go to [integrations/features](https://admin.webex.com/wxcc/integrations/features) section of Control hub and create a new feature/config by selecting the authorized service app.
@@ -398,9 +398,9 @@ Response:
 
 
 # References <a name="references-section"></a>
-1. **Service apps** - [https://developer.webex-cx.com/documentation/service-apps](https://developer.webex.com/messaging/docs/service-apps)
-2. **Data Sources** - [https://developer.webex-cx.com/documentation/guides/bring-your-own-data-source](https://developer.webex.com/create/docs/bring-your-own-datasource)
-3. **BYoVA** - [https://developer.webex-cx.com/documentation/guides/bring-your-own-virtual-agent](https://developer.webex.com/webex-contact-center/docs/bring-your-own-virtual-agent)
+1. **Service apps** - https://developer.webex.com/admin/docs/service-apps
+2. **Data Sources** - https://developer.webex.com/webex-contact-center/docs/api/v1/data-sources
+3. **BYoVA** - https://developer.webex.com/webex-contact-center/docs/bring-your-own-virtual-agent
 4. **Schema defintions** - https://github.com/webex/dataSourceSchemas/tree/main/Services
 5. **Sample Code** -
 The Dialog Connector Simulator is a sample code that demonstrates how to integrate an external conversational interface with Webex Contact Center IVR.
