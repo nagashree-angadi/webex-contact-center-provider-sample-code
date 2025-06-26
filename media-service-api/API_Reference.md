@@ -36,6 +36,7 @@ This step is necessary for Virtual agent application(server) to know that the gR
 #### List Virtual Agents <a name="list-va-section"></a>
 This Service is used to list virtual agents on the flow UI.
 rpc ListVirtualAgents(ListVARequest) returns (ListVAResponse) {}
+
 **Parameters**
 [ListVARequest](https://github.com/webex/dataSourceSchemas/blob/098583adedf9a811c0170e45d986a57728773628/Services/VoiceVirtualAgent/5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/byova_common.proto#L112) is the request param in the list virtual agent service.
 [ListVAResponse](https://github.com/webex/dataSourceSchemas/blob/098583adedf9a811c0170e45d986a57728773628/Services/VoiceVirtualAgent/5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/byova_common.proto#L143) includes the list of virtual agents received as response.
@@ -44,6 +45,7 @@ Details of the service are mentioned [here](https://github.com/webex/dataSourceS
 #### Process caller input <a name="process-audio-section"></a>
 Bidirectional streaming RPC to send and receive caller audio, DTMF or input events.
 rpc ProcessCallerInput(stream VoiceVARequest) returns (stream VoiceVAResponse)
+
 **Parameters**
 [VoiceVARequest](https://github.com/webex/dataSourceSchemas/blob/098583adedf9a811c0170e45d986a57728773628/Services/VoiceVirtualAgent/5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/voicevirtualagent.proto#L15) is the request paramter, which is used to send caller audio/DTMF data/Input event data to Virtual agent application.
 [VoiceVAResponse](https://github.com/webex/dataSourceSchemas/blob/098583adedf9a811c0170e45d986a57728773628/Services/VoiceVirtualAgent/5397013b-7920-4ffc-807c-e8a3e0a18f43/Proto/voicevirtualagent.proto#L79) is the response received from Virtual agent application based on VoiceVARequest data.
@@ -56,6 +58,7 @@ Details of the service are mentioned [here](https://github.com/webex/dataSourceS
 #### Media forking <a name="forking-audio-section"></a>
 Bidirectional streaming RPC where the client streams the audio during the call and server sends acknowledgement when onComplete() is received.
 rpc StreamConversationAudio(stream ConversationAudioForkingRequest) returns (stream ConversationAudioForkingResponse)
+
 **Parameters**
 [ConversationAudioForkingRequest](https://github.com/webex/dataSourceSchemas/blob/098583adedf9a811c0170e45d986a57728773628/Services/AudioForking/523e1b7f-4693-47bc-b84e-a7b7a505fb0b/Proto/conversationaudioforking.proto#L9) is the request parameters which includes the audio bytes along with other additional parameters.
 [ConversationAudioForkingResponse](https://github.com/webex/dataSourceSchemas/blob/098583adedf9a811c0170e45d986a57728773628/Services/AudioForking/523e1b7f-4693-47bc-b84e-a7b7a505fb0b/Proto/conversationaudioforking.proto#L47) is the response sent by Server(listening to forked media).
