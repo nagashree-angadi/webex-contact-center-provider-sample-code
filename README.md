@@ -397,7 +397,7 @@ Response:
 }
 ```
 # mTLS authentication support
-Refer to 
+Refer to [wiki](mTLSAuthentication.md)
 
 # References <a name="references-section"></a>
 1. **Service apps** - https://developer.webex.com/admin/docs/service-apps
