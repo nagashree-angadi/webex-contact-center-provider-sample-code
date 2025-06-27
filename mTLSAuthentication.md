@@ -1,0 +1,93 @@
+# mTLS (Mutual TLS) for `Bring Your Own Virtual Agent`
+mTLS (Mutual TLS) is an extension of TLS (Transport Layer Security) that ensures both the `CCAI` (client) and `Virtual Agent` (server) authenticate each other during communication. 
+Unlike standard TLS, which only authenticates the virtual agent to the `CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication.
+mTLS is used in this scenario to ensure secure communication and mutual authentication between the `Virtual Agent` and the `CCAI`.
+
+
+## mTLS Handshake Process
+![mTLS-flow-diagram.jpg](./media-service-api/dialog-connector-simulator/src/main/resources/images/mTLS-flow-diagram.jpg)
+
+## Getting started with mTLS
+
+### Certificates needed by `Virtual Agent`
+- **Server Certificate**: Publicly issued certificate used by the `Virtual Agent` to verify its identity to the `CCAI`.
+- **Server Private Key**: Used by the `Virtual Agent` for encryption.
+- **IdenTrust Root CA Certificate**: Used to validate the `CCAI` certificate by `Virtual Agent`. This can be downloaded from [IdenTrust](https://www.identrust.com/identrust-commercial-root-ca-1).
+- **CCAI Certificate**: The certificate presented by the `CCAI` during the handshake. This is typically provided by Cisco and is used to verify the identity of the `CCAI`.
+
+**NOTE**: The `Virtual Agent` must explicitly ask for `CCAI` certificate during the TLS handshake. This is done by setting `clientAuth(ClientAuth.REQUIRE)` in the SSL context configuration, explained in detail below. 
+
+### `CCAI` Certificate Details for verification on `Virtual Agent`
+**Subject**: `CN=insight-orchestrator.intgus1.ciscoccservice.com, O=Cisco Systems Inc., L=San Jose, ST=California, C=US`
+
+**NOTE**: CN (Subject's Common Name) is subjected to change based on the environment, so please check the certificate details for your organization.
+
+## Changes needed in `Dialog Connector Simulator`
+
+`Dialog Connector Simulator` acts as the `Virtual Agent` in this scenario, and it needs to be configured to support mTLS. The following changes are required,
+
+### 1. Changes in gRPC server
+Update the `GrpcServer` class to configure SSL for gRPC using Netty. The server will load the root CA certificate from IdenTrust and use its own private key and certificate for mTLS.
+
+```java
+// Path to the server certificate file
+File certFile = new File("../dialog-connector-simulator.crt");
+// Path to the server private key file
+File keyFile = new File("../dialog-connector-simulator.key");
+// Path to the IdenTrust root CA certificate file
+File caCert = new File("../identrust-commercial-root-ca.crt"); 
+        
+// SSL context configuration for the gRPC server
+SslContext sslContext = GrpcSslContexts.configure(SslContextBuilder.forServer(certFile, keyFile)) // Load the certificate and private key files
+        .trustManager(caCert) // Trust the IdenTrust root CA certificate
+        .clientAuth(ClientAuth.REQUIRE) // Needs to be set to REQUIRE to request client certificate
+        .build();
+
+// Create the gRPC server builder with SSL context
+Server builder = NettyServerBuilder.forPort(PORT) 
+        .sslContext(sslContext)  // Set the SSL context for the server
+        // Add the required interceptors and services
+        .intercept(new ClientCertificateInterceptor()) // Interceptor to handle client certificate validation
+        .build()
+        .start();
+```
+
+### 2. Add an intercept to verify CCAI Certificate
+Add the ClientCertificateInterceptor class to extract and validate the client certificate presented during the handshake.
+
+```java
+public class ClientCertificateInterceptor implements ServerInterceptor {
+    @Override
+    public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> call,
+                                                                 Metadata headers,
+                                                                 ServerCallHandler<ReqT, RespT> next) {
+        // Extract the SSL session from the call attributes
+        SSLSession sslSession = call.getAttributes().get(Grpc.TRANSPORT_ATTR_SSL_SESSION); 
+        if (sslSession != null) {
+            try {
+                // Check if the SSL session has the client certificates
+                if (sslSession.getPeerCertificates() == null || sslSession.getPeerCertificates().length == 0) {
+                    throw new StatusRuntimeException(Status.UNAUTHENTICATED.withDescription("Client certificate is required"));
+                }
+
+                // Retrieve the client certificate from the SSL session
+                Certificate certificate = sslSession.getPeerCertificates()[0];
+
+                // Validate the client certificate against the expected CCAI certificate
+                validateClientCertificate(clientCert);
+            } catch (Exception e) {
+                throw new StatusRuntimeException(Status.UNAUTHENTICATED.withDescription("Invalid client certificate: " + e.getMessage()));
+            }
+        } else {
+            throw new StatusRuntimeException(Status.UNAUTHENTICATED.withDescription("SSL session not found"));
+        }
+
+        return next.startCall(call, headers);
+    }
+    
+    private void validateClientCertificate(X509Certificate clientCert) {
+        // Implement validation logic for the CCAI certificate
+        // This can include checking the subject, issuer, and expiration date
+    }
+}
+```
