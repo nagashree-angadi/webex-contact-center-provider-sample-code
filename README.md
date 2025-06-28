@@ -398,7 +398,7 @@ Response:
 ```
 # mTLS authentication support <a name="mtls-authentication-support-section"></a>
 mTLS (Mutual TLS) is an extension of TLS (Transport Layer Security) that ensures both the `CCAI` (client) and `Dialog Connector` (server) authenticate each other during communication. 
-Unlike standard TLS, which only authenticates the virtual agent to the `CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication.
+Unlike standard TLS, which only authenticates the `Dialog Connector` to the `CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication.
 mTLS is used in this scenario to ensure secure communication and mutual authentication between the `Dialog Connector` and the `CCAI`.
 
 Refer to [wiki](mTLSAuthentication.md) for more details on mTLS authentication support. 
