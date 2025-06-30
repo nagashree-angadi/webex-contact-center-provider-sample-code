@@ -1,6 +1,6 @@
 # mTLS (Mutual TLS) authentication
-mTLS (Mutual TLS) is an extension of TLS (Transport Layer Security) that ensures both the `CCAI` (client) and `Dialog Connector` (server) authenticate each other during communication. 
-Unlike standard TLS, which only authenticates the `Dialog Connector` to the `CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication. mTLS is used in this scenario to ensure secure communication and mutual authentication between the `Dialog Connector` and the `CCAI`.
+mTLS (Mutual TLS) is an extension of TLS (Transport Layer Security) that ensures both the `Webex CCAI` (client) and `Dialog Connector` (server) authenticate each other during communication. 
+Unlike standard TLS, which only authenticates the `Dialog Connector` to the `Webex CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication. mTLS is used in this scenario to ensure secure communication and mutual authentication between the `Dialog Connector` and the `Webex CCAI`.
 
 Currently available for the following features,
 - Bring Your Own Virutal Agent
@@ -12,14 +12,14 @@ Currently available for the following features,
 ## Getting started with mTLS
 
 ### Certificates needed by `Dialog Connector`
-- **Server Certificate**: Publicly issued certificate used by the `Dialog Connector` to verify its identity to the `CCAI`.
+- **Server Certificate**: Publicly issued certificate used by the `Dialog Connector` to verify its identity to the `Webex CCAI`.
 - **Server Private Key**: Used by the `Dialog Connector` for encryption.
-- **IdenTrust Root CA Certificate**: Used to validate the `CCAI` certificate by `Dialog Connector`. This can be downloaded from [IdenTrust](https://www.identrust.com/identrust-commercial-root-ca-1).
-- **CCAI Certificate**: The certificate presented by the `CCAI` during the handshake. This is typically provided by Cisco and is used to verify the identity of the `CCAI`.
+- **IdenTrust Root CA Certificate**: Used to validate the `Webex CCAI` certificate by `Dialog Connector`. This can be downloaded from [IdenTrust](https://www.identrust.com/identrust-commercial-root-ca-1).
+- **Webex CCAI Certificate**: The certificate presented by the `Webex CCAI` during the handshake. This is typically provided by Cisco and is used to verify the identity of the `Webex CCAI`.
 
-**NOTE**: The `Dialog Connector` must explicitly ask for `CCAI` certificate during the TLS handshake. This is done by setting `clientAuth(ClientAuth.REQUIRE)` in the SSL context configuration, explained in detail below. 
+**NOTE**: The `Dialog Connector` must explicitly ask for `Webex CCAI` certificate during the TLS handshake. This is done by setting `clientAuth(ClientAuth.REQUIRE)` in the SSL context configuration, explained in detail below. 
 
-### `CCAI` Certificate Details for verification on `Dialog Connector`
+### `Webex CCAI` Certificate Details for verification on `Dialog Connector`
 **Subject**: `CN=insight-orchestrator.intgus1.ciscoccservice.com, O=Cisco Systems Inc., L=San Jose, ST=California, C=US`
 
 **NOTE**: CN (Subject's Common Name) is subjected to change based on the environment, so please check the certificate details for your organization.
@@ -54,7 +54,7 @@ Server builder = NettyServerBuilder.forPort(PORT)
         .start();
 ```
 
-### 2. Add an intercept to verify CCAI Certificate
+### 2. Add an intercept to verify Webex CCAI Certificate
 Add the ClientCertificateInterceptor class to extract and validate the client certificate presented during the handshake.
 
 ```java
@@ -75,7 +75,7 @@ public class ClientCertificateInterceptor implements ServerInterceptor {
                 // Retrieve the client certificate from the SSL session
                 Certificate certificate = sslSession.getPeerCertificates()[0];
 
-                // Validate the client certificate against the expected CCAI certificate
+                // Validate the client certificate against the expected Webex CCAI certificate
                 validateClientCertificate(clientCert);
             } catch (Exception e) {
                 throw new StatusRuntimeException(Status.UNAUTHENTICATED.withDescription("Invalid client certificate: " + e.getMessage()));
@@ -88,7 +88,7 @@ public class ClientCertificateInterceptor implements ServerInterceptor {
     }
     
     private void validateClientCertificate(X509Certificate clientCert) {
-        // Implement validation logic for the CCAI certificate
+        // Implement validation logic for the Webex CCAI certificate
         // This can include checking the subject, issuer, and expiration date
     }
 }
