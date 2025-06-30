@@ -1,7 +1,7 @@
 # Table of Contents
 1. [Media Service APIs](#media-service-api-section)
-1.1. [Bring your Own Virtual agent](#byova-section)
-1.2. [Media Forking](#media-forking-section)
+   - [Bring your Own Virtual agent](#byova-section)
+   - [Media Forking](#media-forking-section)
 2. [Key Concepts](#key-concepts-section)
 3. [General Guidelines](#general-guidelines-section)
 4. [Customer/Partner onboarding](#byova-onboarding-section)
