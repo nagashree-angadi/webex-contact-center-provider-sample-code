@@ -1,7 +1,7 @@
 # Table of Contents
 1. [Media Service APIs](#media-service-api-section)
-1.1. [Bring your Own Virtual agent](#byova-section)
-1.2. [Media Forking](#media-forking-section)
+   - [Bring your Own Virtual agent](#byova-section)
+   - [Media Forking](#media-forking-section)
 2. [Key Concepts](#key-concepts-section)
 3. [General Guidelines](#general-guidelines-section)
 4. [Customer/Partner onboarding](#byova-onboarding-section)
@@ -397,9 +397,9 @@ Response:
 }
 ```
 # mTLS authentication support <a name="mtls-authentication-support-section"></a>
-mTLS (Mutual TLS) is an extension of TLS (Transport Layer Security) that ensures both the `CCAI` (client) and `Dialog Connector` (server) authenticate each other during communication. 
-Unlike standard TLS, which only authenticates the `Dialog Connector` to the `CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication.
-mTLS is used in this scenario to ensure secure communication and mutual authentication between the `Dialog Connector` and the `CCAI`.
+mTLS (Mutual TLS) is an extension of TLS (Transport Layer Security) that ensures both the `Webex CCAI` (client) and `Dialog Connector` (server) authenticate each other during communication. 
+Unlike standard TLS, which only authenticates the `Dialog Connector` to the `Webex CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication.
+mTLS is used in this scenario to ensure secure communication and mutual authentication between the `Dialog Connector` and the `Webex CCAI`.
 
 Refer to [wiki](mTLSAuthentication.md) for more details on mTLS authentication support. 
 

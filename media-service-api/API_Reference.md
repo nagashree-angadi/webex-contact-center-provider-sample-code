@@ -1,14 +1,14 @@
 # Table of Contents
-1. [Media Service APIs](#media-service-api-section)
-1.1. [Authentication and Validation of the Source](#authentication-section)
-1.2. [Bring Your Own Virtual Agent](#byova-section)
-1.2.1. [Services](#byova-services-section)
-1.2.1.1. [List Virtual Agents](#list-va-section)
-1.2.1.2. [Process Caller Input](#process-audio-section)
-1.3. [Real Time Media Forking](#media-forking-section)
-1.3.1. [Services](#forking-services-section)
-1.3.1.1. [Media Forking](#forking-audio-section")
-2. [References](#references-section)
+- [Media Service APIs](#media-service-api-section)
+  - [Authentication and Validation of the Source](#authentication-section)
+  - [Bring Your Own Virtual Agent](#byova-section)  
+    - [Services](#byova-services-section)
+      - [List Virtual Agents](#list-va-section)
+      - [Process Caller Input](#process-audio-section)
+  - [Real Time Media Forking](#media-forking-section)
+    - [Services](#forking-services-section)
+      - [Media Forking](#forking-audio-section)
+- [References](#references-section)
 
 
 # Media Service APIs <a name="media-service-api-section"></a>
@@ -23,11 +23,11 @@ This document describes the streaming APIs and relavant gRPC services provided b
 
 ## Authentication and Validation of the source <a name="authentication-section"></a>
 JWS(signed JWT) will be used as validation of the source from Virtual agent applications.
-JWS will be created by Cisco/Webex while registering the [data source](https://developer.webex.com/create/docs/bring-your-own-datasource), for the respective org and will be signed using Cisco's private key.
-This JWS will be returned as API response(data source registration) and should be stored/cached by the virtual agent application(at vendor/customer end).
+JWS will be created by Cisco/Webex while registering the [data source](https://developer.webex.com/create/docs/bring-your-own-datasource), for the respective org and will be signed using Cisco's private key. This JWS will be returned as API response(data source registration) and should be stored/cached by the virtual agent application(at vendor/customer end).
 When Contact center will try to establish a gRPC connection with Virtual agent application, it will send JWS along.
 Virtual agent application(server), needs to validate this JWS as per process explained [here](https://developer.webex.com/create/docs/bring-your-own-datasource#verify-the-jws-token)
 This step is necessary for Virtual agent application(server) to know that the gRPC connection is being established by Cisco.
+<p>Additionally, mTLS authentication is supported for virtual agents. This security protocol ensures that both the Webex CCAI (client) and the Virtual Agent (server) authenticate each other's identities using publicly signed certificates during the TLS handshake process. For more details, refer to the [wiki](mTLSAuthentication.md).</p>
 
 ## Bring your Own Virtual Agent <a name="byova-section"></a>
 
