@@ -1,8 +1,8 @@
 # mTLS (Mutual TLS) authentication
 mTLS (Mutual TLS) is an extension of TLS (Transport Layer Security) that ensures both the `Webex CCAI` (client) and `Dialog Connector` (server) authenticate each other during communication. 
-Unlike standard TLS, which only authenticates the `Dialog Connector` to the `Webex CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication. mTLS is used in this scenario to ensure secure communication and mutual authentication between the `Dialog Connector` and the `Webex CCAI`.
+Unlike standard TLS, which only authenticates the `Dialog Connector` to the `Webex CCAI`, mTLS requires both parties to present and validate certificates, providing bidirectional authentication. mTLS is used in this scenario to ensure secure communication and mutual authentication between the `Dialog Connector` and the `Webex CCAI`. This is an optional transport-layer security mechanism supported by `Wexcc CCAI` platform. This doesn't eliminate the need for creation of datasource and using JWTs. 
 
-Currently available for the following features,
+This optional authentication method is currently available for the following features,
 - Bring Your Own Virutal Agent
 - Media Forking
 
@@ -11,15 +11,13 @@ Currently available for the following features,
 
 ## Getting started with mTLS
 
-### Certificates needed by `Dialog Connector`
+### Keywords
 - **Server Certificate**: Publicly issued certificate used by the `Dialog Connector` to verify its identity to the `Webex CCAI`.
 - **Server Private Key**: Used by the `Dialog Connector` for encryption.
 - **IdenTrust Root CA Certificate**: Used to validate the `Webex CCAI` certificate by `Dialog Connector`. This can be downloaded from [IdenTrust](https://www.identrust.com/identrust-commercial-root-ca-1).
 - **Webex CCAI Certificate**: The certificate presented by the `Webex CCAI` during the handshake. This is typically provided by Cisco and is used to verify the identity of the `Webex CCAI`.
 
-**NOTE**: The `Dialog Connector` must explicitly ask for `Webex CCAI` certificate during the TLS handshake. This is done by setting `clientAuth(ClientAuth.REQUIRE)` in the SSL context configuration, explained in detail below. 
-
-### `Webex CCAI` Certificate Details for verification on `Dialog Connector`
+### `Webex CCAI` Certificate Details
 **Subject**: `CN=insight-orchestrator.intgus1.ciscoccservice.com, O=Cisco Systems Inc., L=San Jose, ST=California, C=US`
 
 **NOTE**: CN (Subject's Common Name) is subjected to change based on the environment, so please check the certificate details for your organization.
@@ -30,6 +28,7 @@ Currently available for the following features,
 
 ### 1. Changes in gRPC server
 Update the `GrpcServer` class to configure SSL for gRPC using Netty. The server will load the root CA certificate from IdenTrust and use its own private key and certificate for mTLS.
+**NOTE**: The `Dialog Connector` must explicitly ask for `Webex CCAI` certificate during the TLS handshake. This is done by setting `clientAuth(ClientAuth.REQUIRE)` in the SSL context configuration. 
 
 ```java
 // Path to the server certificate file
