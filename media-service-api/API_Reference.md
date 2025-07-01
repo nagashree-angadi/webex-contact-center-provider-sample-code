@@ -22,12 +22,12 @@ More details about this , please refer [link](https://developer.webex-cx.com/doc
 This document describes the streaming APIs and relavant gRPC services provided by webex contact center platform for aobe mentioned use cases.
 
 ## Authentication and Validation of the source <a name="authentication-section"></a>
-JWS(signed JWT) will be used as validation of the source from Virtual agent applications.
+JWS(signed JWT) will be used as validation of the source from Virtual agent applications. This Token-based authentication and authorization is used to secure the communication between the Webex CCAI and Virtual Agent Applications.
 JWS will be created by Cisco/Webex while registering the [data source](https://developer.webex.com/create/docs/bring-your-own-datasource), for the respective org and will be signed using Cisco's private key. This JWS will be returned as API response(data source registration) and should be stored/cached by the virtual agent application(at vendor/customer end).
 When Contact center will try to establish a gRPC connection with Virtual agent application, it will send JWS along.
 Virtual agent application(server), needs to validate this JWS as per process explained [here](https://developer.webex.com/create/docs/bring-your-own-datasource#verify-the-jws-token)
 This step is necessary for Virtual agent application(server) to know that the gRPC connection is being established by Cisco.
-<p>Additionally, mTLS authentication is supported for virtual agents. This security protocol ensures that both the Webex CCAI (client) and the Virtual Agent (server) authenticate each other's identities using publicly signed certificates during the TLS handshake process. For more details, refer to the [wiki](mTLSAuthentication.md).</p>
+<p>Additionally, mTLS authentication is supported for virtual agents. This transport-layer security protocol ensures that both the Webex CCAI (client) and the Virtual Agent (server) authenticate each other's identities using publicly signed certificates during the TLS handshake process, thus securing the API communication channel. For more details, refer to the [wiki](mTLSAuthentication.md).</p>
 
 ## Bring your Own Virtual Agent <a name="byova-section"></a>
 
