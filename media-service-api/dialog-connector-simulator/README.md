@@ -47,6 +47,25 @@ Verify the Installation by opening a new terminal and run:
 
    `mvn clean install`
 
+4. Run the gRPC Server:
+
+   **Option 1 - Using Maven exec plugin:**
+   ```bash
+   mvn exec:java -Dexec.mainClass="com.cisco.wccai.grpc.server.GrpcServer"
+   ```
+
+   **Option 2 - Using the generated JAR:**
+   ```bash
+   java -jar target/dialog-connector-simulator-1.0.0-SNAPSHOT-allinone.jar
+   ```
+
+   **Option 3 - Using Java directly:**
+   ```bash
+   java -cp target/classes:target/dependency/* com.cisco.wccai.grpc.server.GrpcServer
+   ```
+
+   The server will start and listen for incoming gRPC connections. You should see log output indicating the server has started successfully.
+
 
 ### gRPC Bi-directional Streaming Guidelines
 1. _onNext_, _onError_, and _onCompleted_ are gRPC methods defined in the [StreamObserver<T>](https://grpc.github.io/grpc-java/javadoc/io/grpc/stub/StreamObserver.html) interface for the Java language. The names of these methods and their API signatures vary due to language-specific idioms and implementations of the gRPC library. For more details, please refer to the [gRPC documentation](https://grpc.io/docs/languages/). 
@@ -186,7 +205,24 @@ Here,the dialog connector simulator server represents a **gRPC Server Applicatio
 3. Build the Main Application:
 
    `mvn clean install`
-4. The Dialog Connector will start up as a **gRPC Server Application** (`run GrpcServer.java`).
+4. Run the gRPC Server:
+
+   **Option 1 - Using Maven exec plugin:**
+   ```bash
+   mvn exec:java -Dexec.mainClass="com.cisco.wccai.grpc.server.GrpcServer"
+   ```
+
+   **Option 2 - Using the generated JAR:**
+   ```bash
+   java -jar target/dialog-connector-simulator-1.0.0-SNAPSHOT-allinone.jar
+   ```
+
+   **Option 3 - Using Java directly:**
+   ```bash
+   java -cp target/classes:target/dependency/* com.cisco.wccai.grpc.server.GrpcServer
+   ```
+
+5. The Dialog Connector will start up as a **gRPC Server Application** (`run GrpcServer.java`).
 
 ### Detailed Flow with Sequence Diagram
 
