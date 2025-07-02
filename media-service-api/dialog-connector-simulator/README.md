@@ -40,7 +40,7 @@ Verify the Installation by opening a new terminal and run:
     `java -version`
 2. Compile Protobuf Definitions: This will generate java classes under target/generated-sources/protobuf/grpc-java and target/generated-sources/protobuf/java.
     
-    `cd webex-contact-center-byova-sample-code/provider-api/dialog-connector-simulator`
+    `cd webex-contact-center-byova-sample-code/media-service-api/dialog-connector-simulator`
 
     `mvn clean compile`
 3. Build the Main Application:
