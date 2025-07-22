@@ -1,5 +1,6 @@
 package com.cisco.wccai.grpc.server.interceptors;
 
+import com.cisco.wccai.grpc.utils.LoadProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
@@ -18,15 +19,17 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class JWTAuthorizationHandler implements AuthorizationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JWTAuthorizationHandler.class);
+    private static final Properties PROPERTIES = LoadProperties.loadProperties();
 
     private static final String IDENTITY_BROKER_URL = "https://idbrokerbts.webex.com";
-    private static final String VALID_DATASOURCE_URL = "https://dialog-connector-simulator.intgus1.ciscoccservice.com:443";
+    private final String VALID_DATASOURCE_URL = PROPERTIES.getProperty("DATASOURCE_URL", "https://dialog-connector-simulator.intgus1.ciscoccservice.com:443");
     private static final String DATASOURCE_URL_KEY = "com.cisco.datasource.url";
     private static final String DATASOURCE_SCHEMA_KEY = "com.cisco.datasource.schema.uuid";
     private static final String VALID_DATASOURCE_SCHEMA_UUID = "5397013b-7920-4ffc-807c-e8a3e0a18f43";
@@ -36,6 +39,9 @@ public class JWTAuthorizationHandler implements AuthorizationHandler {
     private static final long CACHE_DURATION = TimeUnit.MINUTES.toMillis(60); // Cache duration of 60 minutes
     private static final ReentrantLock cacheLock = new ReentrantLock();
 
+    public JWTAuthorizationHandler() {
+        LOGGER.info("JWTAuthorizationHandler initialized with datasource URL: {}", VALID_DATASOURCE_URL);
+    }
 
     /*
     This method validates the JWS/JWT token received as part of the data source registration response. and used while sending data over gRPC.

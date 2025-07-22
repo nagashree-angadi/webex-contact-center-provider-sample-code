@@ -38,16 +38,30 @@ Webex CC VA Client Application which is a **gRPC Client Application**(see `src/m
 Verify the Installation by opening a new terminal and run:
 
     `java -version`
-2. Compile Protobuf Definitions: This will generate java classes under target/generated-sources/protobuf/grpc-java and target/generated-sources/protobuf/java.
+    
+2. Configure the application:
+   Edit `src/main/resources/config.properties` and update the configuration values for your environment:
+   ```properties
+   # For local development with ngrok, update this to your ngrok URL
+   DATASOURCE_URL = https://your-ngrok-id.ngrok-free.app
+   
+   # Other important settings
+   API_URL = localhost
+   PORT = 8086
+   USE_TLS = false
+   ```
+
+3. Compile Protobuf Definitions: This will generate java classes under target/generated-sources/protobuf/grpc-java and target/generated-sources/protobuf/java.
     
     `cd webex-contact-center-byova-sample-code/media-service-api/dialog-connector-simulator`
 
     `mvn clean compile`
-3. Build the Main Application:
+    
+4. Build the Main Application:
 
    `mvn clean install`
 
-4. Run the gRPC Server:
+5. Run the gRPC Server:
 
    **Option 1 - Using Maven exec plugin:**
    ```bash
@@ -65,6 +79,62 @@ Verify the Installation by opening a new terminal and run:
    ```
 
    The server will start and listen for incoming gRPC connections. You should see log output indicating the server has started successfully.
+
+### Configuration
+
+The Dialog Connector Simulator uses the `src/main/resources/config.properties` file for configuration. Key properties include:
+
+#### JWT Validation Configuration
+- **DATASOURCE_URL**: The datasource URL used for JWT token validation. This must match the `com.cisco.datasource.url` claim in the JWT token received from Webex Contact Center.
+  - For local development with ngrok: `https://your-ngrok-id.ngrok-free.app`
+  - For production: Your actual service URL (e.g., `https://your-domain.com:443`)
+  - Default: `https://dialog-connector-simulator.intgus1.ciscoccservice.com:443`
+
+#### Audio Configuration
+- **AUDIO_ENCODING_TYPE**: Supported types - `LINEAR16`, `MULAW` (default: `MULAW`)
+- **SAMPLE_RATE_HERTZ**: Audio sample rate (default: `8000`)
+- **BUFFER_SIZE**: Audio buffer size (default: `8192`)
+
+#### Server Configuration
+- **API_URL**: Endpoint to connect (default: `localhost`)
+- **PORT**: Server port - TLS: `443`, NonTLS: `31400` (default: `8086`)
+- **USE_TLS**: Enable/disable TLS (default: `false`)
+
+#### Other Configuration
+- **LANGUAGE_CODE**: Language code for processing (default: `en-US`)
+- **ORG_ID**: Organization identifier (default: `org_01`)
+- **PROMPT_DURATION_MS**: Prompt duration in milliseconds (default: `10000`)
+- **AUDIO_DURATION_MS**: Audio duration in milliseconds (default: `60000`)
+- **SAVE_INPUT_AUDIO**: Whether to save input audio (default: `true`)
+
+**Important**: When using ngrok for local development, make sure to update the `DATASOURCE_URL` property with your current ngrok URL to avoid JWT validation failures.
+
+### Troubleshooting
+
+#### JWT Claims Validation Failed Error
+If you encounter the error `Claims validation failed` in your logs, this is typically caused by one of the following issues:
+
+1. **Datasource URL Mismatch**: The most common cause is when the `DATASOURCE_URL` in your `config.properties` doesn't match the `com.cisco.datasource.url` claim in your JWT token.
+   - **Solution**: Update the `DATASOURCE_URL` property to match your current service URL
+   - **For ngrok users**: Update the URL whenever you restart ngrok and get a new URL
+
+2. **Missing Required JWT Claims**: Ensure your JWT token contains all required claims:
+   - `iss` (issuer) - must be one of the valid Webex issuers
+   - `aud` (audience) - must be present
+   - `sub` (subject) - must be present  
+   - `jti` (JWT ID) - must be present
+   - `com.cisco.datasource.url` - must match your `DATASOURCE_URL`
+   - `com.cisco.datasource.schema.uuid` - must be `5397013b-7920-4ffc-807c-e8a3e0a18f43`
+
+3. **Invalid Issuer**: The JWT issuer must be one of the supported Webex identity brokers:
+   - `https://idbrokerbts.webex.com/idb`
+   - `https://idbrokerbts-eu.webex.com/idb`
+   - `https://idbroker.webex.com/idb`
+   - `https://idbroker-eu.webex.com/idb`
+   - `https://idbroker-b-us.webex.com/idb`
+   - `https://idbroker-ca.webex.com/idb`
+
+To debug JWT issues, you can decode your JWT token using tools like [jwt.io](https://jwt.io) to verify the claims.
 
 
 ### gRPC Bi-directional Streaming Guidelines
