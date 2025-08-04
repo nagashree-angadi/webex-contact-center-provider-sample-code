@@ -2,11 +2,14 @@ package com.cisco.wccai.grpc.server;
 
 import com.cisco.wcc.ccai.media.v1.ByovaCommon;
 import com.cisco.wcc.ccai.media.v1.Voicevirtualagent;
+import com.google.protobuf.Struct;
+import com.google.protobuf.Value;
 import io.grpc.stub.StreamObserver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVARequest;
 import static com.cisco.wcc.ccai.media.v1.Voicevirtualagent.VoiceVAResponse;
@@ -28,7 +31,7 @@ public class VoiceVirtualAgentService {
         switch (voiceVARequest.getVoiceVaInputTypeCase()) {
             case EVENT_INPUT -> {
                 log.info("Received voice virtual event input");
-                processEventInput(voiceVARequest.getEventInput().getEventType(), voiceVARequest.getConversationId(), voiceVAResponse);
+                processEventInput(voiceVARequest, voiceVARequest.getConversationId(), voiceVAResponse);
             }
             case DTMF_INPUT -> {
                 log.info("Received dtmf input");
@@ -81,14 +84,31 @@ public class VoiceVirtualAgentService {
         processCallerAudio(voiceVARequest, voiceVAResponse);
     }
 
-    private void processEventInput(ByovaCommon.EventInput.EventType eventInput, String conversationId, StreamObserver<VoiceVAResponse> voiceVAResponse) {
+    private void processEventInput(VoiceVARequest voiceVARequest, String conversationId, StreamObserver<VoiceVAResponse> voiceVAResponse) {
+        ByovaCommon.EventInput.EventType eventInput = voiceVARequest.getEventInput().getEventType();
         switch (eventInput) {
             case SESSION_END ->
                     log.info("Received SESSION_END event for conversationId : {} ", conversationId);
             case SESSION_START ->
                     log.info("Received SESSION_START event for conversationId : {} ", conversationId);
+            case CUSTOM_EVENT -> handleCustomEvent(voiceVARequest);
             default ->
                     log.info("Ignoring event : {} for conversationId : {} ", eventInput, conversationId);
+        }
+    }
+
+    private void handleCustomEvent(Voicevirtualagent.VoiceVARequest voiceVARequest) {
+        String customEventType = voiceVARequest.getEventInput().getEventType().name();
+        String customEventName = voiceVARequest.getEventInput().getName();
+        log.info("Processing {} with name: {} for conversationId: {}", customEventType, customEventName, voiceVARequest.getConversationId());
+        try {
+            Struct struct = voiceVARequest.getEventInput().getParameters();
+            Map<String, Value> map = struct.getFieldsMap();
+            for (Map.Entry<String, Value> entry : map.entrySet()) {
+                log.info("Custom event parameter: {} = {}", entry.getKey(), entry.getValue().getStringValue());
+            }
+        } catch (Exception ex) {
+            log.error("Failed to parse CUSTOM_EVENT details for conversationId: {}", voiceVARequest.getConversationId(), ex);
         }
     }
 
